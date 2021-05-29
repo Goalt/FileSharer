@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  file_sharer:
+    depends_on:
+      file_sharer_db:
+        condition: service_healthy
+    image: file_sharer:latest
+    expose:
+      - 8080
+    ports:
+      - "20000:8080"
+    restart: always
+    env_file:
+      docker_env.env
+  file_sharer_db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    env_file:
+      docker_env.env
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 3s
+      retries: 20
+volumes:
+  db_data: {}
