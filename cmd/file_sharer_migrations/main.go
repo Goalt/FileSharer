@@ -14,7 +14,6 @@ func main() {
 		Action: func(c *cli.Context) error {
 			switch c.Args().Len() {
 			case 0:
-
 				return nil
 			case 1:
 				return nil

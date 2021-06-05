@@ -16,3 +16,9 @@ It runs services. Application will available on localhost:20000
 ```bash
 make run
 ```
+
+## All
+Clean, build, run.
+```bash
+make all
+```

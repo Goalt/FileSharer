@@ -22,10 +22,15 @@ FROM alpine:3.9
 
 RUN apk add ca-certificates
 
-COPY --from=build_base /tmp/file-sharer-app/out/file-sharer-app /app/file-sharer-app
+# Set the Current Working Directory inside the container
+WORKDIR /app/file-sharer-app
+
+COPY --from=build_base /tmp/file-sharer-app/html/ ./
+
+COPY --from=build_base /tmp/file-sharer-app/out/file-sharer-app/ ./
 
 # This container exposes port 8080 to the outside world
 EXPOSE 8080
 
 # Run the binary program produced by `go install`
-CMD ["/app/file-sharer-app/file_sharer_api"]
+CMD ["file_sharer_api"]

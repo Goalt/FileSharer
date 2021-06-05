@@ -3,6 +3,7 @@ build:
 run:
 	docker-compose -f docker/docker-compose.yml up
 clean:
-	docker stop file_sharer_db file_sharer
-	docker rm docker_db_data file_sharer_db file_sharer
+	docker stop file_sharer_db || true && docker rm file_sharer_db || true
+	docker stop file_sharer || true && docker rm file_sharer || true
+	docker volume rm docker_db_data || true
 all: clean build run
