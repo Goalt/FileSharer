@@ -11,10 +11,11 @@ COPY go.sum .
 
 RUN go mod download
 
-COPY .. .
+COPY . .
 
-# Build the Go app
-RUN go build -o ./out/file-sharer-app ./cmd
+# Build the Go apps
+RUN go build -o ./out/file-sharer-app/file_sharer_api ./cmd/file_sharer_api/main.go
+RUN go build -o ./out/file-sharer-app/file_sharer_migrations ./cmd/file_sharer_migrations/main.go
 
 # Start fresh from a smaller image
 FROM alpine:3.9
@@ -27,4 +28,4 @@ COPY --from=build_base /tmp/file-sharer-app/out/file-sharer-app /app/file-sharer
 EXPOSE 8080
 
 # Run the binary program produced by `go install`
-CMD ["/app/file-sharer-app"]
+CMD ["/app/file-sharer-app/file_sharer_api"]
