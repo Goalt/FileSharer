@@ -1,8 +1,71 @@
-<html lang="en">
+<html>
 <head>
-    <title>Site</title>
+    <title>Test page</title>
+    
+    <!-- Dev only -->
+    <meta http-equiv="Cache-control" content="no-cache">
+
+    <script src="jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <p>Test site 2</p>
+<div class="row">
+    <div class="col">
+        <div class="container p-3 mb-2 bg-primary text-white" >
+
+            <div class="row">
+                <div class="col">
+                    <center>FileSharer</center>
+                </div>
+
+                <div class="col">
+                    <div class="container github">
+                        <div class="vl"></div>
+                        <img src="imgs/GitHub-Mark-Light-120px-plus.png" sizes="10px, 10px">
+                        <p class="github">Github</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="form-control" class="form-control" id="floatingInput" placeholder="name@example.com">
+                        <label for="floatingInput">Enter your token</label>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <button id="downloadButton" type="button" class="btn btn-primary">Download</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for="formFile" class="form-label">Input file</label>
+                    <input id="inputForm" class="form-control" type="file">
+                </div>
+                
+                <div class="col">
+                    <button id="uploadButton" type="button" class="btn btn-primary">Upload</button>
+                </div>
+
+
+                <div class="col">
+                    <div> Your Token: </div>
+                </div>
+
+                <div class="col">
+                    <div id="token"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="script.js"></script>
 </body>
 </html>

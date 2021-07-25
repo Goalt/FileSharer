@@ -14,7 +14,6 @@ services:
       docker_env.env
   file_sharer_db:
     image: mysql:5.7
-    container_name: file_sharer_db
     volumes:
       - db_data:/var/lib/mysql
     restart: always
