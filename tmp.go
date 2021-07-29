@@ -50,6 +50,8 @@ func download(c echo.Context) error {
 		Data:     "12345",
 	}
 
+	fmt.Println("Download: ", tokenId.TokenId)
+
 	return c.JSON(200, file)
 }
 

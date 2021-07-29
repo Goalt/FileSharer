@@ -1,15 +1,14 @@
-package main
+package file_sharer_migrations
 
 import (
 	"errors"
+	"github.com/Goalt/FileSharer/cmd/subcomands"
 	"github.com/urfave/cli/v2"
-	"log"
-	"os"
 )
 
-func main() {
-	app := &cli.App{
-		Name:  "FileSharer_migrations",
+func init() {
+	subcommand := &cli.Command{
+		Name:  "FileSharer migrations",
 		Usage: "./filesharer_migrations [version]",
 		Action: func(c *cli.Context) error {
 			switch c.Args().Len() {
@@ -23,8 +22,5 @@ func main() {
 		},
 	}
 
-	err := app.Run(os.Args)
-	if err != nil {
-		log.Fatal(err)
-	}
+	subcomands.Add(subcommand)
 }

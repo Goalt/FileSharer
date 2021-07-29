@@ -6,4 +6,8 @@ clean:
 	docker stop file_sharer_db || true && docker rm file_sharer_db || true
 	docker stop file_sharer || true && docker rm file_sharer || true
 	docker volume rm docker_db_data || true
-all: clean build run
+generate:
+	cd internal/provider/
+	wire
+	cd -
+all: clean generate build run
