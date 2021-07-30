@@ -5,7 +5,7 @@ RUN apk add --update make
 RUN apk add --update alpine-sdk
 
 # Set the Current Working Directory inside the container
-WORKDIR /tmp/file-sharer-app
+WORKDIR /file-sharer-app
 
 # We want to populate the module cache based on the go.{mod,sum} files.
 COPY go.mod .
@@ -20,7 +20,7 @@ COPY . .
 RUN make generate
 
 # Build the Go apps
-RUN go build -o ./out/file-sharer-app/file_sharer_api ./cmd/main.go
+RUN go build -o file_sharer_api ./cmd/main.go
 
 # Start fresh from a smaller image
 FROM alpine:3.9
@@ -28,13 +28,12 @@ FROM alpine:3.9
 RUN apk add ca-certificates
 
 # Set the Current Working Directory inside the container
-WORKDIR /app/file-sharer-app
+WORKDIR /file-sharer-app
 
-COPY --from=build_base /tmp/file-sharer-app/html/ ./
-
-COPY --from=build_base /tmp/file-sharer-app/out/file-sharer-app/ ./
+COPY --from=build_base /file-sharer-app/html ./html
+COPY --from=build_base /file-sharer-app/file_sharer_api ./
 
 # This container exposes port 8080 to the outside world
 EXPOSE 8080
 
-CMD ["/tmp/file-sharer-app/out/file-sharer-app/"] 
+ENTRYPOINT ["/file-sharer-app/file_sharer_api"]
