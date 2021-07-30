@@ -29,7 +29,7 @@ func (a *Application) Run() error {
 	<-a.ctx.Done()
 
 	//Server stop
-	err = a.server.Stop()
+	err := a.server.Stop()
 	if err != nil {
 		a.log.Error(a.ctx, err.Error())
 	}

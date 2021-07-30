@@ -9,5 +9,10 @@ clean:
 generate:
 	cd internal/provider/
 	wire
-	cd -
-all: clean generate build run
+	cd ../..
+sync:
+	ssh dev2 "mkdir -p ./.vscode_proj && mkdir -p ./.vscode_proj/Filesharer"
+	rsync -avzh --delete ./ dev2:/home/ubuntu/.vscode_proj/Filesharer
+allDev: sync
+	ssh dev2 "cd ./.vscode_proj/Filesharer && make all"
+all: clean build run

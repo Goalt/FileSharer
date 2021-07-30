@@ -1,14 +1,15 @@
 package provider
 
 import (
+	"log"
+	"os"
+	"time"
+
 	"github.com/Goalt/FileSharer/internal/config"
 	"github.com/Goalt/FileSharer/internal/infrastructure/http"
 	"github.com/Goalt/FileSharer/internal/interface/controller"
 	"github.com/google/wire"
 	"gorm.io/gorm/logger"
-	"log"
-	"os"
-	"time"
 )
 
 func provideLogger(config config.Config) logger.Interface {
@@ -24,7 +25,7 @@ func provideLogger(config config.Config) logger.Interface {
 }
 
 func provideServer(config config.Config, controller controller.HTTPController) http.Server {
-	return http.NewHTTPServer(controller)
+	return http.NewHTTPServer(config.Server.Port, controller)
 }
 
 var infrastructureSet = wire.NewSet(provideServer, provideLogger)

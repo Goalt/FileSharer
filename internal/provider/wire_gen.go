@@ -32,6 +32,7 @@ type Application struct {
 }
 
 func (a *Application) Run() error {
+
 	go func() {
 		err := a.server.Run()
 		if err != nil {
@@ -41,7 +42,7 @@ func (a *Application) Run() error {
 
 	<-a.ctx.Done()
 
-	err = a.server.Stop()
+	err := a.server.Stop()
 	if err != nil {
 		a.log.Error(a.ctx, err.Error())
 	}
