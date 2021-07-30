@@ -2,8 +2,8 @@ version: "3.7"
 
 services:
   file_sharer:
-    # depends_on:
-    #   - file_sharer_db
+    depends_on:
+      - file_sharer_db
     image: file_sharer:latest
     container_name: file_sharer
     ports:
@@ -11,18 +11,18 @@ services:
     restart: always
     env_file:
       docker_env.env
-  # file_sharer_db:
-  #   image: bobsense/mysql
-  #   volumes:
-  #     - db_data:/var/lib/mysql
-  #   restart: always
-  #   env_file:
-  #     docker_env.env
-  #   healthcheck:
-  #     test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-  #     timeout: 3s
-  #     retries: 20
-  #   ports:
-  #     - "20001:3306"
+  file_sharer_db:
+    image: bobsense/mysql
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    env_file:
+      docker_env.env
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 3s
+      retries: 20
+    ports:
+      - "20001:3306"
 volumes:
   db_data: {}

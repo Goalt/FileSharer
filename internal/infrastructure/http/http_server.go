@@ -1,9 +1,10 @@
 package http
 
 import (
+	"strconv"
+
 	"github.com/Goalt/FileSharer/internal/interface/controller"
 	"github.com/labstack/echo/v4"
-	"strconv"
 )
 
 type Server interface {
@@ -27,6 +28,11 @@ func (hs *httpServer) Stop() error {
 }
 
 func NewHTTPServer(port int, httpController controller.HTTPController) Server {
+	server := &httpServer{
+		port:           port,
+		httpController: httpController,
+	}
+
 	e := echo.New()
 
 	e.Static("/imgs", "html/imgs/")
@@ -35,9 +41,13 @@ func NewHTTPServer(port int, httpController controller.HTTPController) Server {
 	e.File("/script.js", "html/script.js")
 	e.File("/jquery-3.6.0.min.js", "html/jquery-3.6.0.min.js")
 
-	return &httpServer{
-		e:              e,
-		port:           port,
-		httpController: httpController,
-	}
+	e.POST("/api/add", server.AddHandler)
+
+	server.e = e
+
+	return server
+}
+
+func (hs *httpServer) AddHandler(c echo.Context) error {
+	return hs.httpController.AddHandler(c)
 }

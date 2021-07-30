@@ -1,9 +1,11 @@
 package controller
 
-import "github.com/Goalt/FileSharer/internal/usecase/interactor"
+import (
+	"github.com/Goalt/FileSharer/internal/usecase/interactor"
+)
 
 type HTTPController interface {
-	AddHandler(hc HTTPContext) HTTPError
+	AddHandler(httpCtx HTTPContext) HTTPError
 }
 
 type httpController struct {
