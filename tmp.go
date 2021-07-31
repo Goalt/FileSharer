@@ -33,8 +33,8 @@ func main() {
 	e.File("/script.js", "html/script.js")
 	e.File("/jquery-3.6.0.min.js", "html/jquery-3.6.0.min.js")
 
-	e.POST("/upload", upload)
-	e.GET("/download", download)
+	e.POST("/api/upload", upload)
+	e.GET("/api/download", download)
 
 	_ = e.Start(":8080")
 }
@@ -81,7 +81,7 @@ func upload(c echo.Context) error {
 				log.Fatal(err)
 			}
 
-			fmt.Printf("Part %q: %q\n", p.Header.Get("filename"), slurp)
+			fmt.Printf("Part %q: %q\n", p.FileName(), slurp)
 		}
 	}
 

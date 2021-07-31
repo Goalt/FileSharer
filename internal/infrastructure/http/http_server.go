@@ -4,7 +4,8 @@ import (
 	"strconv"
 
 	"github.com/Goalt/FileSharer/internal/interface/controller"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 type Server interface {
@@ -41,13 +42,22 @@ func NewHTTPServer(port int, httpController controller.HTTPController) Server {
 	e.File("/script.js", "html/script.js")
 	e.File("/jquery-3.6.0.min.js", "html/jquery-3.6.0.min.js")
 
-	e.POST("/api/add", server.AddHandler)
+	e.POST("/api/upload", server.upload)
+	e.GET("/api/download", server.download)
+
+	// Req id
+	e.Use(middleware.RequestID())
+	e.Use(middleware.LoggerWithConfig(middleware.DefaultLoggerConfig))
 
 	server.e = e
 
 	return server
 }
 
-func (hs *httpServer) AddHandler(c echo.Context) error {
-	return hs.httpController.AddHandler(c)
+func (hs *httpServer) upload(c echo.Context) error {
+	return hs.httpController.Upload(&Context{c: c})
+}
+
+func (hs *httpServer) download(c echo.Context) error {
+	return hs.httpController.Download(&Context{c: c})
 }

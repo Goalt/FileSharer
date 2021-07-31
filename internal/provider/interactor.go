@@ -5,8 +5,8 @@ import (
 	"github.com/google/wire"
 )
 
-func provideCalculatorInteractor() interactor.CalculatorInteractor {
-	return interactor.NewCalculatorInteractor()
+func provideCalculatorInteractor() interactor.FileInteractor {
+	return interactor.NewFileInteractor()
 }
 
 var interactorSet = wire.NewSet(provideCalculatorInteractor)

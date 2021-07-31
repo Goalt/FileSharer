@@ -15,8 +15,9 @@ import (
 // Injectors from wire.go:
 
 func InitializeApp(cfg config.Config, context2 context.Context) Application {
-	calculatorInteractor := provideCalculatorInteractor()
-	httpController := provideHTTPController(calculatorInteractor)
+	fileInteractor := provideCalculatorInteractor()
+	loggerInterface := provideLogger(cfg)
+	httpController := provideHTTPController(fileInteractor, loggerInterface)
 	server := provideServer(cfg, httpController)
 	application := provideApp(server, cfg, context2)
 	return application

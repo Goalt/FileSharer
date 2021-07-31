@@ -1,7 +1,14 @@
 package controller
 
-import "github.com/labstack/echo/v4"
+import (
+	"context"
+	"io"
+)
 
 type HTTPContext interface {
-	echo.Context
+	HeaderGet(string) string
+	BodyReader() io.Reader
+	JSON(httpCode int, value interface{}) error
+	Context() context.Context
+	QueryGet(key string) string
 }

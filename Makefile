@@ -7,9 +7,7 @@ clean:
 	docker stop file_sharer || true && docker rm file_sharer || true
 	docker volume rm docker_db_data || true
 generate:
-	cd internal/provider/
-	wire
-	cd ../..
+	cd internal/provider/ && wire && cd ../..
 sync:
 	ssh dev2 "mkdir -p ./.vscode_proj && mkdir -p ./.vscode_proj/Filesharer"
 	rsync -avzh --delete ./ dev2:/home/ubuntu/.vscode_proj/Filesharer

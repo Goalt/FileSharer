@@ -3,10 +3,15 @@ module github.com/Goalt/FileSharer
 go 1.16
 
 require (
+	github.com/go-playground/universal-translator v0.17.0 // indirect
+	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/google/wire v0.5.0
+	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.3.0
+	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/sethvargo/go-signalcontext v0.1.0
 	github.com/urfave/cli/v2 v2.3.0
-	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
+	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gorm.io/gorm v1.21.12
 )

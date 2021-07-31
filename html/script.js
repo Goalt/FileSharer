@@ -1,14 +1,12 @@
 $(document).ready(function() {
-    const urlUpload = 'http://localhost:8080/upload';
-    const urlDownload = 'http://localhost:8080/download';
+    const urlUpload = 'http://localhost:8080/api/upload';
+    const urlDownload = 'http://localhost:8080/api/download';
 
     $('#uploadButton').click(function(e) {
         e.preventDefault();
     
         var formData = new FormData();
         formData.append('source', $('#inputForm').prop('files')[0]);
-
-        console.log($('#inputForm').prop('files')[0])
 
         success = function(data, textStatus, jqXHR) {
             console.log(data, textStatus, jqXHR);
