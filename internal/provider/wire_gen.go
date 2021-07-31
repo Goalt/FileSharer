@@ -14,13 +14,31 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeApp(cfg config.Config, context2 context.Context) Application {
-	fileInteractor := provideCalculatorInteractor()
-	loggerInterface := provideLogger(cfg)
-	httpController := provideHTTPController(fileInteractor, loggerInterface)
+func InitializeApp(cfg config.Config, context2 context.Context) (Application, func(), error) {
+	db, cleanup := provideGORM(cfg)
+	fileInfoRepository := provideFileInfoRepository(db)
+	fileSystemRepository, err := provideFileSystemRepository(cfg)
+	if err != nil {
+		cleanup()
+		return Application{}, nil, err
+	}
+	cryptoRepository, err := provideCryptoRepository(cfg)
+	if err != nil {
+		cleanup()
+		return Application{}, nil, err
+	}
+	cryptoInteractor := provideCryptoInteracor(cryptoRepository)
+	uuidGenerator := provideUUIDGenerator()
+	generatorInteractor := provideGeneratorInteractor(uuidGenerator)
+	loggerInterface := provideLoggerGorm(cfg)
+	logger := provideLogger(loggerInterface)
+	fileInteractor := provideCalculatorInteractor(fileInfoRepository, fileSystemRepository, cryptoInteractor, generatorInteractor, logger)
+	httpController := provideHTTPController(cfg, fileInteractor, loggerInterface)
 	server := provideServer(cfg, httpController)
 	application := provideApp(server, cfg, context2)
-	return application
+	return application, func() {
+		cleanup()
+	}, nil
 }
 
 // wire.go:
@@ -29,7 +47,8 @@ type Application struct {
 	ctx context.Context
 	log logger.Interface
 
-	server http.Server
+	server  http.Server
+	cleanup ServicesCleanup
 }
 
 func (a *Application) Run() error {

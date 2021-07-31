@@ -3,15 +3,13 @@ package controller
 import (
 	"errors"
 	"fmt"
-	"io"
 	"mime"
 	"mime/multipart"
-	"net/http"
 	"strings"
 
 	"github.com/Goalt/FileSharer/internal/domain"
 	"github.com/Goalt/FileSharer/internal/usecase/interactor"
-	"github.com/Goalt/FileSharer/internal/usecase/repository"
+	usecase_repository "github.com/Goalt/FileSharer/internal/usecase/repository"
 	"github.com/go-playground/validator"
 )
 
@@ -22,7 +20,8 @@ var (
 	fileNameHeader   = "filename"
 	tokenQuery       = "token_id"
 
-	ErrBadRequest = errors.New("bad request")
+	errBadRequest    = errors.New("bad request")
+	statusBadRequest = 500
 )
 
 type HTTPController interface {
@@ -31,25 +30,27 @@ type HTTPController interface {
 }
 
 type httpController struct {
+	maxFileSize    int // MaxFileSize in bytes
 	fileInteractor interactor.FileInteractor
+	handler
 	*validator.Validate
-	logger repository.Logger
+	logger usecase_repository.Logger
 }
 
-func NewHTTPController(fileInteractor interactor.FileInteractor, logger repository.Logger) HTTPController {
-	return &httpController{fileInteractor, validator.New(), logger}
+func NewHTTPController(maxFileSize int, fileInteractor interactor.FileInteractor, logger usecase_repository.Logger) HTTPController {
+	return &httpController{maxFileSize, fileInteractor, handler{}, validator.New(), logger}
 }
 
 func (hc *httpController) Upload(httpCtx HTTPContext) error {
 	mediaType, params, err := mime.ParseMediaType(httpCtx.HeaderGet(contetTypeHeader))
 	if err != nil {
 		hc.logger.Error(httpCtx.Context(), "parse media type error", err)
-		return mapError(httpCtx, ErrBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
 	}
 
 	if !strings.HasPrefix(mediaType, multipartPrefix) {
 		hc.logger.Error(httpCtx.Context(), "media type error", nil)
-		return mapError(httpCtx, ErrBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
 	}
 
 	body := httpCtx.BodyReader()
@@ -60,56 +61,48 @@ func (hc *httpController) Upload(httpCtx HTTPContext) error {
 	switch {
 	case err != nil:
 		hc.logger.Error(httpCtx.Context(), "multipart read error", err)
-		return mapError(httpCtx, ErrBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
 	}
 
-	data, err := io.ReadAll(part)
+	data := make([]byte, hc.maxFileSize+1)
+	fileSize, err := part.Read(data)
+	if fileSize == hc.maxFileSize+1 {
+		hc.logger.Error(httpCtx.Context(), "max file size", err)
+		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
+	}
 	if err != nil {
 		hc.logger.Error(httpCtx.Context(), "data read error", err)
-		return mapError(httpCtx, ErrBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
 	}
 
-	file := &domain.File{
+	file := domain.File{
 		Data:           data,
 		FileNameOrigin: part.FileName(),
 	}
 	if err := hc.Validate.Struct(file); err != nil {
 		hc.logger.Error(httpCtx.Context(), "input data validate error", err)
-		return mapError(httpCtx, ErrBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
 	}
 
 	token, err := hc.fileInteractor.Upload(httpCtx.Context(), file)
 	if err != nil {
-		return mapError(httpCtx, err)
+		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
 	}
 
-	return httpCtx.JSON(http.StatusOK, token)
+	return hc.Ok(httpCtx, token)
 }
 
 func (hc *httpController) Download(httpCtx HTTPContext) error {
 	token := domain.Token{Id: httpCtx.QueryGet(tokenQuery)}
 	if err := hc.Validate.Struct(token); err != nil {
 		hc.logger.Error(httpCtx.Context(), "input data validate error", err)
-		return mapError(httpCtx, ErrBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
 	}
 
 	file, err := hc.fileInteractor.Download(httpCtx.Context(), token)
 	if err != nil {
-		return mapError(httpCtx, err)
+		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
 	}
 
-	return httpCtx.JSON(http.StatusOK, file)
-}
-
-type httpError struct {
-	Text string `json:"text"`
-}
-
-func mapError(httpCtx HTTPContext, err error) error {
-	switch {
-	case errors.Is(err, ErrBadRequest):
-		fallthrough
-	default:
-		return httpCtx.JSON(http.StatusBadRequest, httpError{Text: err.Error()})
-	}
+	return hc.Ok(httpCtx, file)
 }

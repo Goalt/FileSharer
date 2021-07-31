@@ -3,17 +3,26 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/signal"
 
 	"github.com/Goalt/FileSharer/cmd/subcomands"
 	_ "github.com/Goalt/FileSharer/cmd/subcomands/file_sharer_migrations"
 	"github.com/Goalt/FileSharer/internal/config"
 	"github.com/Goalt/FileSharer/internal/provider"
-	"github.com/sethvargo/go-signalcontext"
 	"github.com/urfave/cli/v2"
+	"golang.org/x/net/context"
 )
 
 var (
-	DebugLevel = "DEBUG_LEVEL"
+	DebugLevel        = "DEBUG_LEVEL"
+	MaxFileSize       = "MAX_FILE_SIZE"
+	RootPath          = "ROOT_PATH"
+	SecretKey         = "SECRET_KEY"
+	MysqlDatabaseName = "MYSQL_DATABASE"
+	MysqlUser         = "MYSQL_USER"
+	MysqlPassword     = "MYSQL_PASSWORD"
+	MysqlHost         = "MYSQL_HOST"
+	MysqlPort         = "MYSQL_PORT"
 )
 
 func main() {
@@ -28,21 +37,52 @@ func main() {
 				Value:   1,
 				EnvVars: []string{DebugLevel},
 			},
+			&cli.IntFlag{
+				Name:    MaxFileSize,
+				Value:   1,
+				EnvVars: []string{MaxFileSize},
+			},
+			&cli.IntFlag{
+				Name:    MaxFileSize,
+				Value:   1,
+				EnvVars: []string{MaxFileSize},
+			},
 		},
 		Action: func(ctx *cli.Context) error {
 			cfg := config.Config{
-				DebugLevel: ctx.Int(DebugLevel),
+				MaxFileSize: ctx.Int(MaxFileSize),
+				DebugLevel:  ctx.Int(DebugLevel),
+				RootPath:    ctx.String(RootPath),
+				Key:         []byte(ctx.String(SecretKey)),
+				Database: config.Database{
+					Host:     ctx.String(MysqlHost),
+					Port:     ctx.String(MysqlPort),
+					User:     ctx.String(MysqlUser),
+					Password: ctx.String(MysqlPassword),
+					DBName:   ctx.String(MysqlDatabaseName),
+				},
 				Server: config.Server{
 					Port: 8080,
 				},
 			}
 
-			signalCtx, cancel := signalcontext.OnInterrupt()
-			defer cancel()
+			signalCtx, cancel := context.WithCancel(context.Background())
+			app, cleanup, err := provider.InitializeApp(cfg, signalCtx)
+			defer cleanup()
+			if err != nil {
+				fmt.Println(err)
+			}
 
-			app := provider.InitializeApp(cfg, signalCtx)
+			err = app.Run()
+			if err != nil {
+				fmt.Println(err)
+			}
 
-			_ = app.Run()
+			c := make(chan os.Signal, 1)
+			signal.Notify(c, os.Interrupt, os.Kill)
+
+			<-c
+			cancel()
 
 			return nil
 		},

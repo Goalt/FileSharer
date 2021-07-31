@@ -12,7 +12,7 @@ type File struct {
 }
 
 type FileInfo struct {
-	Token          string
+	Token          Token
 	FileName       string
 	FileNameOrigin string
 	CreatedAt      time.Time
