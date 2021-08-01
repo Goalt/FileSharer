@@ -18,40 +18,40 @@ import (
 
 type ServicesCleanup func()
 
-func provideLoggerGorm(config config.Config) logger.Interface {
+func ProvideLoggerGorm(level DebugLevel) logger.Interface {
 	return logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
 			SlowThreshold:             time.Second,
-			LogLevel:                  logger.LogLevel(config.DebugLevel),
+			LogLevel:                  logger.LogLevel(level),
 			IgnoreRecordNotFoundError: true,
 			Colorful:                  false,
 		},
 	)
 }
 
-func provideServer(config config.Config, controller controller.HTTPController) http.Server {
-	return http.NewHTTPServer(config.Server.Port, controller)
+func provideServer(cfg config.Server, controller controller.HTTPController) http.Server {
+	return http.NewHTTPServer(cfg.Port, controller)
 }
 
 func provideFileInfoRepository(db *gorm.DB) usecase_repository.FileInfoRepository {
 	return infrastructure_repository.NewGormFileInfoRepository(db)
 }
 
-func provideFileSystemRepository(config config.Config) (usecase_repository.FileSystemRepository, error) {
-	return infrastructure_repository.NewFileSystemRepository(config.RootPath)
+func provideFileSystemRepository(rootPath RootPath) (usecase_repository.FileSystemRepository, error) {
+	return infrastructure_repository.NewFileSystemRepository(string(rootPath))
 }
 
-func provideCryptoRepository(config config.Config) (usecase_repository.CryptoRepository, error) {
-	return infrastructure_repository.NewAESCrypto(config.Key)
+func provideCryptoRepository(key Key) (usecase_repository.CryptoRepository, error) {
+	return infrastructure_repository.NewAESCrypto(key)
 }
 
 func provideUUIDGenerator() usecase_repository.UUIDGenerator {
 	return infrastructure_repository.NewUUIDGenerator()
 }
 
-func provideGORM(config config.Config) (*gorm.DB, func()) {
-	db, err := gorm.Open(mysql.Open(config.Database.GetDsn()), &gorm.Config{})
+func ProvideGORM(config config.Database) (*gorm.DB, func()) {
+	db, err := gorm.Open(mysql.Open(config.GetDsn()), &gorm.Config{})
 	if err != nil {
 		return nil, nil
 	}
@@ -78,12 +78,12 @@ func provideServicesCleanup(cleanup func()) ServicesCleanup {
 
 var infrastructureSet = wire.NewSet(
 	provideServer,
-	provideLoggerGorm,
+	ProvideLoggerGorm,
 	provideFileInfoRepository,
 	provideFileSystemRepository,
 	provideCryptoRepository,
 	provideUUIDGenerator,
-	provideGORM,
+	ProvideGORM,
 	provideLogger,
 	provideServicesCleanup,
 )

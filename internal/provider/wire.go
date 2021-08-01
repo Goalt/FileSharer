@@ -46,5 +46,5 @@ func provideApp(server http.Server, cfg config.Config, ctx context.Context) Appl
 }
 
 func InitializeApp(cfg config.Config, context context.Context) (Application, func(), error) {
-	panic(wire.Build(provideApp, infrastructureSet, interfaceSet, interactorSet))
+	panic(wire.Build(provideApp, infrastructureSet, interfaceSet, interactorSet, typesSet))
 }

@@ -3,6 +3,7 @@ module github.com/Goalt/FileSharer
 go 1.16
 
 require (
+	github.com/Boostport/migration v0.21.2
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/google/uuid v1.3.0

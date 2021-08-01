@@ -8,15 +8,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type GormfileInfoRepository struct {
+type GormFileInfoRepository struct {
 	db *gorm.DB
 }
 
-func NewGormFileInfoRepository(db *gorm.DB) *GormfileInfoRepository {
-	return &GormfileInfoRepository{db}
+func NewGormFileInfoRepository(db *gorm.DB) *GormFileInfoRepository {
+	return &GormFileInfoRepository{db}
 }
 
-func (gr *GormfileInfoRepository) Get(token domain.Token) (domain.FileInfo, error) {
+func (gr *GormFileInfoRepository) Get(token domain.Token) (domain.FileInfo, error) {
 	dbModel := fileInfoDBModel{
 		TokenId: token.Id,
 	}
@@ -37,7 +37,7 @@ func (gr *GormfileInfoRepository) Get(token domain.Token) (domain.FileInfo, erro
 
 }
 
-func (gr *GormfileInfoRepository) Set(fileInfo domain.FileInfo) error {
+func (gr *GormFileInfoRepository) Set(fileInfo domain.FileInfo) error {
 	dbModel := fileInfoDBModel{
 		TokenId:        fileInfo.Token.Id,
 		FileName:       fileInfo.FileName,

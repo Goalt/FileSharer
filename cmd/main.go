@@ -94,7 +94,9 @@ func main() {
 
 			signalCtx, cancel := context.WithCancel(context.Background())
 			app, cleanup, err := provider.InitializeApp(cfg, signalCtx)
-			defer cleanup()
+			if cleanup != nil {
+				defer cleanup()
+			}
 			if err != nil {
 				fmt.Println(err)
 			}

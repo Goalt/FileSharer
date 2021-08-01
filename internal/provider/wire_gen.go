@@ -15,27 +15,33 @@ import (
 // Injectors from wire.go:
 
 func InitializeApp(cfg config.Config, context2 context.Context) (Application, func(), error) {
-	db, cleanup := provideGORM(cfg)
+	server := provideServerConfig(cfg)
+	maxFileSize := provideMaxFileSize(cfg)
+	database := provideDatabasesConfig(cfg)
+	db, cleanup := ProvideGORM(database)
 	fileInfoRepository := provideFileInfoRepository(db)
-	fileSystemRepository, err := provideFileSystemRepository(cfg)
+	rootPath := provideRootPath(cfg)
+	fileSystemRepository, err := provideFileSystemRepository(rootPath)
 	if err != nil {
 		cleanup()
 		return Application{}, nil, err
 	}
-	cryptoRepository, err := provideCryptoRepository(cfg)
+	key := provideKey(cfg)
+	cryptoRepository, err := provideCryptoRepository(key)
 	if err != nil {
 		cleanup()
 		return Application{}, nil, err
 	}
-	cryptoInteractor := provideCryptoInteracor(cryptoRepository)
+	interactorCryptoInteractor := cryptoInteractor(cryptoRepository)
 	uuidGenerator := provideUUIDGenerator()
 	generatorInteractor := provideGeneratorInteractor(uuidGenerator)
-	loggerInterface := provideLoggerGorm(cfg)
+	debugLevel := provideDebugLevel(cfg)
+	loggerInterface := ProvideLoggerGorm(debugLevel)
 	logger := provideLogger(loggerInterface)
-	fileInteractor := provideCalculatorInteractor(fileInfoRepository, fileSystemRepository, cryptoInteractor, generatorInteractor, logger)
-	httpController := provideHTTPController(cfg, fileInteractor, loggerInterface)
-	server := provideServer(cfg, httpController)
-	application := provideApp(server, cfg, context2)
+	fileInteractor := provideCalculatorInteractor(fileInfoRepository, fileSystemRepository, interactorCryptoInteractor, generatorInteractor, logger)
+	httpController := provideHTTPController(maxFileSize, fileInteractor, loggerInterface)
+	httpServer := provideServer(server, httpController)
+	application := provideApp(httpServer, cfg, context2)
 	return application, func() {
 		cleanup()
 	}, nil

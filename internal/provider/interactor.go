@@ -22,7 +22,7 @@ func provideCalculatorInteractor(
 	)
 }
 
-func provideCryptoInteracor(cryptoRepository usecase_repository.CryptoRepository) interactor.CryptoInteractor {
+func cryptoInteractor(cryptoRepository usecase_repository.CryptoRepository) interactor.CryptoInteractor {
 	return interactor.NewCryptoInteractor(cryptoRepository)
 }
 
@@ -30,4 +30,4 @@ func provideGeneratorInteractor(uuidGenerator usecase_repository.UUIDGenerator) 
 	return interactor.NewGeneratorInteractor(uuidGenerator)
 }
 
-var interactorSet = wire.NewSet(provideCalculatorInteractor, provideCryptoInteracor, provideGeneratorInteractor)
+var interactorSet = wire.NewSet(provideCalculatorInteractor, cryptoInteractor, provideGeneratorInteractor)
