@@ -10,7 +10,6 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.3.0
 	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/sethvargo/go-signalcontext v0.1.0
 	github.com/urfave/cli/v2 v2.3.0
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect

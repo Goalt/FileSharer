@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"syscall"
 
 	"github.com/Goalt/FileSharer/cmd/subcomands"
 	_ "github.com/Goalt/FileSharer/cmd/subcomands/file_sharer_migrations"
@@ -42,10 +43,33 @@ func main() {
 				Value:   1,
 				EnvVars: []string{MaxFileSize},
 			},
-			&cli.IntFlag{
-				Name:    MaxFileSize,
-				Value:   1,
-				EnvVars: []string{MaxFileSize},
+			&cli.StringFlag{
+				Name:    RootPath,
+				EnvVars: []string{RootPath},
+			},
+			&cli.StringFlag{
+				Name:    SecretKey,
+				EnvVars: []string{SecretKey},
+			},
+			&cli.StringFlag{
+				Name:    MysqlDatabaseName,
+				EnvVars: []string{MysqlDatabaseName},
+			},
+			&cli.StringFlag{
+				Name:    MysqlUser,
+				EnvVars: []string{MysqlUser},
+			},
+			&cli.StringFlag{
+				Name:    MysqlPassword,
+				EnvVars: []string{MysqlPassword},
+			},
+			&cli.StringFlag{
+				Name:    MysqlHost,
+				EnvVars: []string{MysqlHost},
+			},
+			&cli.StringFlag{
+				Name:    MysqlPort,
+				EnvVars: []string{MysqlPort},
 			},
 		},
 		Action: func(ctx *cli.Context) error {
@@ -66,6 +90,8 @@ func main() {
 				},
 			}
 
+			fmt.Printf("%+v\n", cfg)
+
 			signalCtx, cancel := context.WithCancel(context.Background())
 			app, cleanup, err := provider.InitializeApp(cfg, signalCtx)
 			defer cleanup()
@@ -79,7 +105,7 @@ func main() {
 			}
 
 			c := make(chan os.Signal, 1)
-			signal.Notify(c, os.Interrupt, os.Kill)
+			signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
 			<-c
 			cancel()
