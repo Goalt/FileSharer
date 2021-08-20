@@ -1,13 +1,13 @@
 build:
 	docker build -t file_sharer:latest -f docker/Dockerfile .
 run:
-	docker-compose -f docker/docker-compose.yml up
-clean:
-	docker stop file_sharer_db || true && docker rm file_sharer_db || true
-	docker stop file_sharer || true && docker rm file_sharer || true
-	docker volume rm docker_db_data || true
+	docker-compose -p file_sharer -f docker/docker-compose.yml up
+clear:
+	docker stop file_sharer; docker rm file_sharer || true
+	docker stop file_sharer_db_1; docker rm file_sharer_db_1 || true
+	docker volume rm file_sharer_db_data || true
 generate:
-	cd internal/provider/ && wire && cd ../..
+	cd internal/provider/ && wire ; cd ../..
 sync:
 	ssh dev2 "mkdir -p ./.vscode_proj && mkdir -p ./.vscode_proj/Filesharer"
 	rsync -avzh --delete ./ dev2:/home/ubuntu/.vscode_proj/Filesharer

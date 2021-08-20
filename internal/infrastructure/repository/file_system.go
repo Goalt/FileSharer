@@ -62,3 +62,20 @@ func (fr *FileSystemRepository) Write(fileName string, data []byte) error {
 
 	return ioutil.WriteFile(fileName, data, fileMode)
 }
+
+func (fr *FileSystemRepository) Delete(fileName string) error {
+	fileInfo, err := os.Stat(fr.rootPath + fileName)
+	if err != nil {
+		return err
+	}
+
+	if fileInfo.Mode() != fileMode {
+		return errWrongFileMode
+	}
+
+	if err = os.Remove(fr.rootPath + fileName); err != nil {
+		return err
+	}
+
+	return nil
+}

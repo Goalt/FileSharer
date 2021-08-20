@@ -55,14 +55,18 @@ func (ci *fileInteractor) Upload(ctx context.Context, file domain.File) (domain.
 		FileNameOrigin: encryptedFile.FileNameOrigin,
 	}
 
-	err = ci.fileSystemRepository.Write(fileName, encryptedFile.Data)
-	if err != nil {
+	if err = ci.fileSystemRepository.Write(fileName, encryptedFile.Data); err != nil {
 		ci.logger.Error(ctx, "failed during saving file's data", err)
 		return domain.Token{}, ErrSaveFile
 	}
-	err = ci.fileInfoRepository.Set(fileInfo)
-	if err != nil {
+
+	if err = ci.fileInfoRepository.Set(fileInfo); err != nil {
 		ci.logger.Error(ctx, "failed during saving file's info", err)
+
+		if err = ci.fileSystemRepository.Delete(fileName); err != nil {
+			ci.logger.Error(ctx, "failed during deleting file", err)
+		}
+
 		return domain.Token{}, ErrSaveFileInfo
 	}
 

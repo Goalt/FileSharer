@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mime"
 	"mime/multipart"
+	"net/http"
 	"strings"
 
 	"github.com/Goalt/FileSharer/internal/domain"
@@ -20,8 +21,7 @@ var (
 	fileNameHeader   = "filename"
 	tokenQuery       = "token_id"
 
-	errBadRequest    = errors.New("bad request")
-	statusBadRequest = 500
+	errBadRequest = errors.New("bad request")
 )
 
 type HTTPController interface {
@@ -45,12 +45,12 @@ func (hc *httpController) Upload(httpCtx HTTPContext) error {
 	mediaType, params, err := mime.ParseMediaType(httpCtx.HeaderGet(contetTypeHeader))
 	if err != nil {
 		hc.logger.Error(httpCtx.Context(), "parse media type error", err)
-		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, http.StatusBadRequest)
 	}
 
 	if !strings.HasPrefix(mediaType, multipartPrefix) {
 		hc.logger.Error(httpCtx.Context(), "media type error", nil)
-		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, http.StatusBadRequest)
 	}
 
 	body := httpCtx.BodyReader()
@@ -61,18 +61,18 @@ func (hc *httpController) Upload(httpCtx HTTPContext) error {
 	switch {
 	case err != nil:
 		hc.logger.Error(httpCtx.Context(), "multipart read error", err)
-		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, http.StatusBadRequest)
 	}
 
 	data := make([]byte, hc.maxFileSize+1)
 	fileSize, err := part.Read(data)
 	if fileSize == hc.maxFileSize+1 {
 		hc.logger.Error(httpCtx.Context(), "max file size", err)
-		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, http.StatusBadRequest)
 	}
 	if err != nil {
 		hc.logger.Error(httpCtx.Context(), "data read error", err)
-		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, http.StatusBadRequest)
 	}
 
 	file := domain.File{
@@ -81,12 +81,12 @@ func (hc *httpController) Upload(httpCtx HTTPContext) error {
 	}
 	if err := hc.Validate.Struct(file); err != nil {
 		hc.logger.Error(httpCtx.Context(), "input data validate error", err)
-		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, http.StatusBadRequest)
 	}
 
 	token, err := hc.fileInteractor.Upload(httpCtx.Context(), file)
 	if err != nil {
-		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, http.StatusBadRequest)
 	}
 
 	return hc.Ok(httpCtx, token)
@@ -96,12 +96,12 @@ func (hc *httpController) Download(httpCtx HTTPContext) error {
 	token := domain.Token{Id: httpCtx.QueryGet(tokenQuery)}
 	if err := hc.Validate.Struct(token); err != nil {
 		hc.logger.Error(httpCtx.Context(), "input data validate error", err)
-		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, http.StatusBadRequest)
 	}
 
 	file, err := hc.fileInteractor.Download(httpCtx.Context(), token)
 	if err != nil {
-		return hc.Fail(httpCtx, errBadRequest, statusBadRequest)
+		return hc.Fail(httpCtx, errBadRequest, http.StatusBadRequest)
 	}
 
 	return hc.Ok(httpCtx, file)

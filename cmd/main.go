@@ -8,22 +8,11 @@ import (
 
 	"github.com/Goalt/FileSharer/cmd/subcomands"
 	_ "github.com/Goalt/FileSharer/cmd/subcomands/file_sharer_migrations"
+	"github.com/Goalt/FileSharer/cmd/variables"
 	"github.com/Goalt/FileSharer/internal/config"
 	"github.com/Goalt/FileSharer/internal/provider"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/net/context"
-)
-
-var (
-	DebugLevel        = "DEBUG_LEVEL"
-	MaxFileSize       = "MAX_FILE_SIZE"
-	RootPath          = "ROOT_PATH"
-	SecretKey         = "SECRET_KEY"
-	MysqlDatabaseName = "MYSQL_DATABASE"
-	MysqlUser         = "MYSQL_USER"
-	MysqlPassword     = "MYSQL_PASSWORD"
-	MysqlHost         = "MYSQL_HOST"
-	MysqlPort         = "MYSQL_PORT"
 )
 
 func main() {
@@ -34,56 +23,56 @@ func main() {
 		Commands: subcomands.Get(),
 		Flags: []cli.Flag{
 			&cli.IntFlag{
-				Name:    DebugLevel,
+				Name:    variables.DebugLevel,
 				Value:   1,
-				EnvVars: []string{DebugLevel},
+				EnvVars: []string{variables.DebugLevel},
 			},
 			&cli.IntFlag{
-				Name:    MaxFileSize,
+				Name:    variables.MaxFileSize,
 				Value:   1,
-				EnvVars: []string{MaxFileSize},
+				EnvVars: []string{variables.MaxFileSize},
 			},
 			&cli.StringFlag{
-				Name:    RootPath,
-				EnvVars: []string{RootPath},
+				Name:    variables.RootPath,
+				EnvVars: []string{variables.RootPath},
 			},
 			&cli.StringFlag{
-				Name:    SecretKey,
-				EnvVars: []string{SecretKey},
+				Name:    variables.SecretKey,
+				EnvVars: []string{variables.SecretKey},
 			},
 			&cli.StringFlag{
-				Name:    MysqlDatabaseName,
-				EnvVars: []string{MysqlDatabaseName},
+				Name:    variables.MysqlDatabaseName,
+				EnvVars: []string{variables.MysqlDatabaseName},
 			},
 			&cli.StringFlag{
-				Name:    MysqlUser,
-				EnvVars: []string{MysqlUser},
+				Name:    variables.MysqlUser,
+				EnvVars: []string{variables.MysqlUser},
 			},
 			&cli.StringFlag{
-				Name:    MysqlPassword,
-				EnvVars: []string{MysqlPassword},
+				Name:    variables.MysqlPassword,
+				EnvVars: []string{variables.MysqlPassword},
 			},
 			&cli.StringFlag{
-				Name:    MysqlHost,
-				EnvVars: []string{MysqlHost},
+				Name:    variables.MysqlHost,
+				EnvVars: []string{variables.MysqlHost},
 			},
 			&cli.StringFlag{
-				Name:    MysqlPort,
-				EnvVars: []string{MysqlPort},
+				Name:    variables.MysqlPort,
+				EnvVars: []string{variables.MysqlPort},
 			},
 		},
 		Action: func(ctx *cli.Context) error {
 			cfg := config.Config{
-				MaxFileSize: ctx.Int(MaxFileSize),
-				DebugLevel:  ctx.Int(DebugLevel),
-				RootPath:    ctx.String(RootPath),
-				Key:         []byte(ctx.String(SecretKey)),
+				MaxFileSize: ctx.Int(variables.MaxFileSize),
+				DebugLevel:  ctx.Int(variables.DebugLevel),
+				RootPath:    ctx.String(variables.RootPath),
+				Key:         []byte(ctx.String(variables.SecretKey)),
 				Database: config.Database{
-					Host:     ctx.String(MysqlHost),
-					Port:     ctx.String(MysqlPort),
-					User:     ctx.String(MysqlUser),
-					Password: ctx.String(MysqlPassword),
-					DBName:   ctx.String(MysqlDatabaseName),
+					Host:     ctx.String(variables.MysqlHost),
+					Port:     ctx.String(variables.MysqlPort),
+					User:     ctx.String(variables.MysqlUser),
+					Password: ctx.String(variables.MysqlPassword),
+					DBName:   ctx.String(variables.MysqlDatabaseName),
 				},
 				Server: config.Server{
 					Port: 8080,
@@ -91,6 +80,7 @@ func main() {
 			}
 
 			fmt.Printf("%+v\n", cfg)
+			fmt.Println("TESTTKLST")
 
 			signalCtx, cancel := context.WithCancel(context.Background())
 			app, cleanup, err := provider.InitializeApp(cfg, signalCtx)

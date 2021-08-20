@@ -1,58 +1,53 @@
 package file_sharer_migrations
 
 import (
+	"time"
+
 	"github.com/Boostport/migration"
 	"github.com/Boostport/migration/driver/mysql"
 	"github.com/Goalt/FileSharer/cmd/subcomands"
+	"github.com/Goalt/FileSharer/cmd/variables"
 	"github.com/Goalt/FileSharer/internal/config"
 	"github.com/Goalt/FileSharer/internal/migrations"
 	"github.com/Goalt/FileSharer/internal/provider"
 	"github.com/urfave/cli/v2"
 )
 
-var (
-	MysqlDatabaseName = "MYSQL_DATABASE"
-	MysqlUser         = "MYSQL_USER"
-	MysqlPassword     = "MYSQL_PASSWORD"
-	MysqlHost         = "MYSQL_HOST"
-	MysqlPort         = "MYSQL_PORT"
-)
-
 func init() {
 	subcommand := &cli.Command{
-		Name:  "filesharer_migrations",
-		Usage: "filesharer_migrations",
+		Name:  "file_sharer_migrations",
+		Usage: "file_sharer_migrations",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:    MysqlDatabaseName,
-				EnvVars: []string{MysqlDatabaseName},
+				Name:    variables.MysqlDatabaseName,
+				EnvVars: []string{variables.MysqlDatabaseName},
 			},
 			&cli.StringFlag{
-				Name:    MysqlUser,
-				EnvVars: []string{MysqlUser},
+				Name:    variables.MysqlUser,
+				EnvVars: []string{variables.MysqlUser},
 			},
 			&cli.StringFlag{
-				Name:    MysqlPassword,
-				EnvVars: []string{MysqlPassword},
+				Name:    variables.MysqlPassword,
+				EnvVars: []string{variables.MysqlPassword},
 			},
 			&cli.StringFlag{
-				Name:    MysqlHost,
-				EnvVars: []string{MysqlHost},
+				Name:    variables.MysqlHost,
+				EnvVars: []string{variables.MysqlHost},
 			},
 			&cli.StringFlag{
-				Name:    MysqlPort,
-				EnvVars: []string{MysqlPort},
+				Name:    variables.MysqlPort,
+				EnvVars: []string{variables.MysqlPort},
 			},
 		},
 		Action: func(ctx *cli.Context) error {
 			logger := provider.ProvideLoggerGorm(4)
 
 			configDB := config.Database{
-				Host:     ctx.String(MysqlHost),
-				Port:     ctx.String(MysqlPort),
-				User:     ctx.String(MysqlUser),
-				Password: ctx.String(MysqlPassword),
-				DBName:   ctx.String(MysqlDatabaseName),
+				Host:     ctx.String(variables.MysqlHost),
+				Port:     ctx.String(variables.MysqlPort),
+				User:     ctx.String(variables.MysqlUser),
+				Password: ctx.String(variables.MysqlPassword),
+				DBName:   ctx.String(variables.MysqlDatabaseName),
 			}
 
 			embedSource := &migration.EmbedMigrationSource{
@@ -61,13 +56,21 @@ func init() {
 			}
 
 			driver, err := mysql.New(configDB.GetDsn())
-
-			// Run all up migrations
-			applied, err := migration.Migrate(driver, embedSource, migration.Up, 0)
 			if err != nil {
 				logger.Error(ctx.Context, "migrations failed", err)
-			} else {
-				logger.Info(ctx.Context, "applied version", applied)
+				return err
+			}
+
+			// Run all up migrations
+			for {
+				applied, err := migration.Migrate(driver, embedSource, migration.Up, 0)
+				if err != nil {
+					logger.Error(ctx.Context, "migrations failed", err)
+					time.Sleep(time.Second * 5)
+				} else {
+					logger.Info(ctx.Context, "applied version", applied)
+					break
+				}
 			}
 
 			return nil
