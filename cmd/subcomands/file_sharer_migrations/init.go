@@ -1,6 +1,7 @@
 package file_sharer_migrations
 
 import (
+	"fmt"
 	"net"
 	"time"
 
@@ -74,7 +75,7 @@ func init() {
 			if err != nil {
 				logger.Error(ctx.Context, "migrations failed", err)
 			} else {
-				logger.Info(ctx.Context, "applied version", applied)
+				logger.Info(ctx.Context, fmt.Sprintf("applied version %v", applied))
 			}
 
 			return nil

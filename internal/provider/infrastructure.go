@@ -52,11 +52,11 @@ func provideUUIDGenerator() usecase_repository.UUIDGenerator {
 	return infrastructure_repository.NewUUIDGenerator()
 }
 
-func ProvideGORM(config config.Database, ctx context.Context, log usecase_repository.Logger) (*gorm.DB, func()) {
+func ProvideGORM(config config.Database, ctx context.Context, log logger.Interface) (*gorm.DB, func()) {
 	var err error
 	var db *gorm.DB
 	for {
-		db, err = gorm.Open(mysql.Open(config.GetDsn()), &gorm.Config{})
+		db, err = gorm.Open(mysql.Open(config.GetDsn()), &gorm.Config{Logger: log})
 		if _, ok := err.(*net.OpError); ok {
 			log.Info(ctx, "db unavailable, sleep for 5 seconds")
 			time.Sleep(time.Second * 5)

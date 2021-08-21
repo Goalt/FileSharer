@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/Goalt/FileSharer/internal/domain"
 	usecase_repository "github.com/Goalt/FileSharer/internal/usecase/repository"
@@ -70,7 +71,7 @@ func (ci *fileInteractor) Upload(ctx context.Context, file domain.File) (domain.
 		return domain.Token{}, ErrSaveFileInfo
 	}
 
-	ci.logger.Info(ctx, "file uploaded with token "+token.Id)
+	ci.logger.Info(ctx, fmt.Sprintf("file uploaded with token %v", token.Id))
 
 	return domain.Token(fileInfo.Token), nil
 }
@@ -97,7 +98,7 @@ func (ci *fileInteractor) Download(ctx context.Context, token domain.Token) (dom
 		return domain.File{}, ErrDownloadFail
 	}
 
-	ci.logger.Info(ctx, "file downloaded with token "+token.Id)
+	ci.logger.Info(ctx, fmt.Sprintf("file downloaded with token %v", token.Id))
 
 	return decryptedFile, nil
 }

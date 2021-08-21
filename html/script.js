@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    const urlUpload = 'http://localhost:8080/api/upload';
-    const urlDownload = 'http://localhost:8080/api/download';
+    const urlUpload = 'https://dev.konkov.xyz/api/upload';
+    const urlDownload = 'https://dev.konkov.xyz/api/download';
 
     $('#uploadButton').click(function(e) {
         e.preventDefault();
