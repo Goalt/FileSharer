@@ -1,8 +1,6 @@
 package file_sharer_migrations
 
 import (
-	"time"
-
 	"github.com/Boostport/migration"
 	"github.com/Boostport/migration/driver/mysql"
 	"github.com/Goalt/FileSharer/cmd/subcomands"
@@ -57,15 +55,9 @@ func init() {
 
 			var err error
 			var driver migration.Driver
-			for {
-				driver, err = mysql.New(configDB.GetDsn())
-				if err != nil {
-					logger.Error(ctx.Context, "migrations failed", err)
-					time.Sleep(time.Second * 5)
-					continue
-				}
-
-				break
+			driver, err = mysql.New(configDB.GetDsn())
+			if err != nil {
+				logger.Error(ctx.Context, "migrations failed", err)
 			}
 
 			// Run all up migrations
