@@ -1,7 +1,9 @@
 package provider
 
 import (
+	"context"
 	"log"
+	"net"
 	"os"
 	"time"
 
@@ -50,10 +52,18 @@ func provideUUIDGenerator() usecase_repository.UUIDGenerator {
 	return infrastructure_repository.NewUUIDGenerator()
 }
 
-func ProvideGORM(config config.Database) (*gorm.DB, func()) {
-	db, err := gorm.Open(mysql.Open(config.GetDsn()), &gorm.Config{})
-	if err != nil {
-		return nil, nil
+func ProvideGORM(config config.Database, ctx context.Context, log usecase_repository.Logger) (*gorm.DB, func()) {
+	var err error
+	var db *gorm.DB
+	for {
+		db, err = gorm.Open(mysql.Open(config.GetDsn()), &gorm.Config{})
+		if _, ok := err.(*net.OpError); ok {
+			log.Info(ctx, "db unavailable, sleep for 5 seconds")
+			time.Sleep(time.Second * 5)
+			continue
+		}
+
+		break
 	}
 
 	cleanup := func() {

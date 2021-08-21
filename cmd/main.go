@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/Goalt/FileSharer/cmd/subcomands"
 	_ "github.com/Goalt/FileSharer/cmd/subcomands/file_sharer_migrations"
@@ -81,7 +79,7 @@ func main() {
 
 			fmt.Printf("%+v\n", cfg)
 
-			signalCtx, cancel := context.WithCancel(context.Background())
+			signalCtx, _ := context.WithCancel(context.Background())
 			app, cleanup, err := provider.InitializeApp(cfg, signalCtx)
 			if cleanup != nil {
 				defer cleanup()
@@ -94,12 +92,6 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
-
-			c := make(chan os.Signal, 1)
-			signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-
-			<-c
-			cancel()
 
 			return nil
 		},

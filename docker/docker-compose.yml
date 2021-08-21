@@ -7,7 +7,7 @@ services:
   #   container_name: file_sharer
   #   ports: [20000:8080]
   #   restart: always
-  #   volumes: [fs_data:/]
+  #   volumes: [fs_data:/data]
   #   env_file: docker_env.env
   db:
     image: mariadb:latest
