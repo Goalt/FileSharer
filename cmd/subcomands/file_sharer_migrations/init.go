@@ -55,22 +55,25 @@ func init() {
 				Dir:     "sql",
 			}
 
-			driver, err := mysql.New(configDB.GetDsn())
-			if err != nil {
-				logger.Error(ctx.Context, "migrations failed", err)
-				return err
-			}
-
-			// Run all up migrations
+			var err error
+			var driver migration.Driver
 			for {
-				applied, err := migration.Migrate(driver, embedSource, migration.Up, 0)
+				driver, err = mysql.New(configDB.GetDsn())
 				if err != nil {
 					logger.Error(ctx.Context, "migrations failed", err)
 					time.Sleep(time.Second * 5)
-				} else {
-					logger.Info(ctx.Context, "applied version", applied)
-					break
+					continue
 				}
+
+				break
+			}
+
+			// Run all up migrations
+			applied, err := migration.Migrate(driver, embedSource, migration.Up, 0)
+			if err != nil {
+				logger.Error(ctx.Context, "migrations failed", err)
+			} else {
+				logger.Info(ctx.Context, "applied version", applied)
 			}
 
 			return nil

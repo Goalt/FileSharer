@@ -16,7 +16,6 @@ services:
     restart: always
     env_file: docker_env.env
     healthcheck:
-      # mysql --user=$FS_MYSQL_USER --password=$FS_MYSQL_PASSWORD -e "select 1" $MYSQL_DATABASE
       test: [ "CMD", "mysql" ,"--user=$${FS_MYSQL_USER}", "--password=$${FS_MYSQL_PASSWORD}", "-e \"select 1\"", "$${MYSQL_DATABASE}"]
       timeout: 8s
       retries: 20

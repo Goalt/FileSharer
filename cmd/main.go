@@ -80,7 +80,6 @@ func main() {
 			}
 
 			fmt.Printf("%+v\n", cfg)
-			fmt.Println("TESTTKLST")
 
 			signalCtx, cancel := context.WithCancel(context.Background())
 			app, cleanup, err := provider.InitializeApp(cfg, signalCtx)
