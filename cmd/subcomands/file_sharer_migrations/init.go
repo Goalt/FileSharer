@@ -73,7 +73,7 @@ func init() {
 			// Run all up migrations
 			applied, err := migration.Migrate(driver, embedSource, migration.Up, 0)
 			if err != nil {
-				logger.Error(ctx.Context, "migrations failed", err)
+				logger.Error(ctx.Context, fmt.Sprintf("migrations failed %v", err))
 			} else {
 				logger.Info(ctx.Context, fmt.Sprintf("applied version %v", applied))
 			}

@@ -54,12 +54,12 @@ func (gr *GormFileInfoRepository) Set(fileInfo domain.FileInfo) error {
 }
 
 type fileInfoDBModel struct {
-	TokenId        string
-	FileName       string
-	FileNameOrigin string
-	CreatedAt      time.Time
+	TokenId        string    `gorm:"primaryKey"`
+	FileName       string    `gorm:"column:file_name"`
+	FileNameOrigin string    `gorm:"column:file_name_origin"`
+	CreatedAt      time.Time `gorm:"column:created_at"`
 }
 
-func (fi *fileInfoDBModel) Tabler() string {
+func (fi *fileInfoDBModel) TableName() string {
 	return config.FileInfoTableName
 }

@@ -8,6 +8,7 @@ import (
 	_ "github.com/Goalt/FileSharer/cmd/subcomands/file_sharer_migrations"
 	"github.com/Goalt/FileSharer/cmd/variables"
 	"github.com/Goalt/FileSharer/internal/config"
+	"github.com/Goalt/FileSharer/internal/errors"
 	"github.com/Goalt/FileSharer/internal/provider"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/net/context"
@@ -73,10 +74,10 @@ func main() {
 					DBName:   ctx.String(variables.MysqlDatabaseName),
 				},
 				Server: config.Server{
-					Port: 8080,
+					Port: 33333,
 				},
 			}
-
+			errors.MaxFileSize = cfg.MaxFileSize
 			fmt.Printf("%+v\n", cfg)
 
 			signalCtx, _ := context.WithCancel(context.Background())

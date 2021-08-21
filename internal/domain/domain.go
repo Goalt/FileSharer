@@ -8,7 +8,7 @@ type Token struct {
 
 type File struct {
 	Data           []byte `json:"file_name" validate:"required"`
-	FileNameOrigin string `json:"data" validate:"required"`
+	FileNameOrigin string `json:"data" validate:"required,min=16"`
 }
 
 type FileInfo struct {

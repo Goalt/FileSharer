@@ -8,11 +8,11 @@ import (
 )
 
 var (
-	errWrongRootDirFileMode = errors.New("wrong permission on root directory, should be 0755")
-	errWrongFileMode        = errors.New("wrong permission on file, should be 0755")
+	errWrongRootDirFileMode = errors.New("wrong permission on root directory, 2147484141")
+	errWrongFileMode        = errors.New("wrong permission on file, 2147484141")
 	errRootDirNotExist      = errors.New("root directory is not exists")
 	rootDirFileMode         = os.FileMode(2147484141)
-	fileMode                = os.FileMode(2147484141)
+	fileMode                = os.FileMode(493)
 )
 
 type FileSystemRepository struct {
@@ -41,7 +41,8 @@ func (fr *FileSystemRepository) Read(fileName string) ([]byte, error) {
 		return nil, err
 	}
 
-	if fileInfo.Mode() != fileMode {
+	mode := fileInfo.Mode()
+	if mode != fileMode {
 		return nil, errWrongFileMode
 	}
 
@@ -62,7 +63,7 @@ func (fr *FileSystemRepository) Write(fileName string, data []byte) error {
 		return err
 	}
 
-	return ioutil.WriteFile(fileName, data, fileMode)
+	return ioutil.WriteFile(fr.rootPath+fileName, data, fileMode)
 }
 
 func (fr *FileSystemRepository) Delete(fileName string) error {

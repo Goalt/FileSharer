@@ -19,14 +19,14 @@ func NewAESCrypto(key []byte) (*AESCrypto, error) {
 }
 
 func (a *AESCrypto) Encrypt(data []byte) ([]byte, error) {
-	var dst []byte
+	dst := make([]byte, len(data))
 	a.cipher.Encrypt(dst, data)
 
 	return dst, nil
 }
 
 func (a *AESCrypto) Decrypt(data []byte) ([]byte, error) {
-	var dst []byte
+	dst := make([]byte, len(data))
 	a.cipher.Decrypt(dst, data)
 
 	return dst, nil

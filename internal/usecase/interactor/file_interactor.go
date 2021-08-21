@@ -44,7 +44,7 @@ func NewFileInteractor(
 func (ci *fileInteractor) Upload(ctx context.Context, file domain.File) (domain.Token, error) {
 	encryptedFile, err := ci.cryptoInteractor.Encrypt(file)
 	if err != nil {
-		ci.logger.Error(ctx, "failed during encrypting file", err)
+		ci.logger.Error(ctx, fmt.Sprintf("failed during encrypting file %v", err))
 		return domain.Token{}, ErrUploadFail
 	}
 
@@ -57,15 +57,15 @@ func (ci *fileInteractor) Upload(ctx context.Context, file domain.File) (domain.
 	}
 
 	if err = ci.fileSystemRepository.Write(fileName, encryptedFile.Data); err != nil {
-		ci.logger.Error(ctx, "failed during saving file's data", err)
+		ci.logger.Error(ctx, fmt.Sprintf("failed during saving file's data %v", err))
 		return domain.Token{}, ErrSaveFile
 	}
 
 	if err = ci.fileInfoRepository.Set(fileInfo); err != nil {
-		ci.logger.Error(ctx, "failed during saving file's info", err)
+		ci.logger.Error(ctx, fmt.Sprintf("failed during saving file's info %v", err))
 
 		if err = ci.fileSystemRepository.Delete(fileName); err != nil {
-			ci.logger.Error(ctx, "failed during deleting file", err)
+			ci.logger.Error(ctx, fmt.Sprintf("failed during deleting file %v", err))
 		}
 
 		return domain.Token{}, ErrSaveFileInfo
@@ -79,12 +79,12 @@ func (ci *fileInteractor) Upload(ctx context.Context, file domain.File) (domain.
 func (ci *fileInteractor) Download(ctx context.Context, token domain.Token) (domain.File, error) {
 	fileInfo, err := ci.fileInfoRepository.Get(token)
 	if err != nil {
-		ci.logger.Error(ctx, "failed during searching file's info", err)
+		ci.logger.Error(ctx, fmt.Sprintf("failed during searching file's info %v", err))
 		return domain.File{}, ErrFindFileInfo
 	}
 	encryptedData, err := ci.fileSystemRepository.Read(fileInfo.FileName)
 	if err != nil {
-		ci.logger.Error(ctx, "failed during reading file's data", err)
+		ci.logger.Error(ctx, fmt.Sprintf("failed during reading file's data %v", err))
 		return domain.File{}, ErrFindFile
 	}
 
@@ -94,7 +94,7 @@ func (ci *fileInteractor) Download(ctx context.Context, token domain.Token) (dom
 	}
 	decryptedFile, err := ci.cryptoInteractor.Decrypt(encryptedFile)
 	if err != nil {
-		ci.logger.Error(ctx, "failed during decrypting file's data", err)
+		ci.logger.Error(ctx, fmt.Sprintf("failed during decrypting file's data %v", err))
 		return domain.File{}, ErrDownloadFail
 	}
 
