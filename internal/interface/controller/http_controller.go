@@ -20,8 +20,6 @@ const (
 	boundaryKey      = "boundary"
 	fileNameHeader   = "filename"
 	tokenQuery       = "token_id"
-
-	minFileNameLength = 16
 )
 
 type HTTPController interface {
