@@ -1,6 +1,7 @@
 package file_sharer_migrations
 
 import (
+	"net"
 	"time"
 
 	"github.com/Boostport/migration"
@@ -59,8 +60,8 @@ func init() {
 			var driver migration.Driver
 			for {
 				driver, err = mysql.New(configDB.GetDsn())
-				if err != nil {
-					logger.Error(ctx.Context, "migrations failed", err)
+				if _, ok := err.(*net.OpError); ok {
+					logger.Info(ctx.Context, "db unavailable, sleep for 5 seconds")
 					time.Sleep(time.Second * 5)
 					continue
 				}
