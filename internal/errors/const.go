@@ -26,6 +26,24 @@ var (
 		Text:         "token format error",
 		ErrorCode:    3,
 	}
+
+	ErrUploadFile = HttpError{
+		ResponseCode: http.StatusInternalServerError,
+		Text:         "failed to download file",
+		ErrorCode:    4,
+	}
+
+	ErrFileNotFound = HttpError{
+		ResponseCode: http.StatusNotFound,
+		Text:         "failed to find file",
+		ErrorCode:    5,
+	}
+
+	ErrDownloadFile = HttpError{
+		ResponseCode: http.StatusInternalServerError,
+		Text:         "failed to download file",
+		ErrorCode:    6,
+	}
 )
 
 var (
