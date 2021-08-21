@@ -15,7 +15,7 @@ func (h *handler) Ok(ctx HTTPContext, body interface{}) error {
 
 func (h *handler) Fail(ctx HTTPContext, body interface{}) error {
 	if httpError, ok := body.(errors.HttpError); ok {
-		return ctx.JSON(httpError.ErrorCode, httpError)
+		return ctx.JSON(httpError.ResponseCode, httpError)
 	}
 
 	return ctx.JSON(http.StatusBadRequest, body)

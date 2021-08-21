@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -25,4 +26,8 @@ var (
 		Text:         "token format error",
 		ErrorCode:    3,
 	}
+)
+
+var (
+	ErrIncorrectDataSize = errors.New("data size less aes.BlockSize")
 )

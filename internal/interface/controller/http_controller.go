@@ -76,12 +76,8 @@ func (hc *httpController) Upload(httpCtx HTTPContext) error {
 	}
 
 	file := domain.File{
-		Data:           data,
+		Data:           data[:fileSize],
 		FileNameOrigin: part.FileName(),
-	}
-	if len(file.FileNameOrigin) < minFileNameLength {
-		appendix := make([]byte, minFileNameLength-len(file.FileNameOrigin))
-		file.FileNameOrigin += string(appendix)
 	}
 
 	if err := hc.Validate.Struct(file); err != nil {
