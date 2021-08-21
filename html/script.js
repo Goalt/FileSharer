@@ -37,7 +37,7 @@ $(document).ready(function() {
         success = function(data, textStatus, jqXHR) {
             console.log(data, textStatus, jqXHR)
 
-            var blob=new Blob([data.data]);
+            var blob=new Blob([atob(data.data)]);
             var link=document.createElement('a');
             link.href=window.URL.createObjectURL(blob);
             link.download=data.file_name;
