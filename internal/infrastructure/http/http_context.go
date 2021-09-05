@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"io"
 	"strconv"
 
@@ -10,7 +11,9 @@ import (
 )
 
 const (
-	formFileParameter = "source"
+	formFileParameter         = "source"
+	contentTypeOctetStream    = "application/octet-stream"
+	contentDispositionPattern = `attachment; filename="%v"`
 )
 
 type Context struct {
@@ -56,9 +59,9 @@ func (c *Context) Context() context.Context {
 func (c *Context) File(httpCode int, data []byte, fileName string) error {
 	response := c.c.Response()
 
-	response.Header().Add("Content-Disposition", `attachment; filename="`+fileName+`"`)
-	response.Header().Add("Content-Type", "application/octet-stream")
-	response.Header().Add("Content-Length", strconv.Itoa(len(data)))
+	response.Header().Add(echo.HeaderContentDisposition, fmt.Sprintf(contentDispositionPattern, fileName))
+	response.Header().Add(echo.HeaderContentType, contentTypeOctetStream)
+	response.Header().Add(echo.HeaderContentLength, strconv.Itoa(len(data)))
 
 	if _, err := response.Writer.Write(data); err != nil {
 		return nil

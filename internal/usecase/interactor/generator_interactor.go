@@ -14,7 +14,7 @@ type generatorInteractor struct {
 	uuidGenerator usecase_repository.UUIDGenerator
 }
 
-func NewGeneratorInteractor(uuidGenerator usecase_repository.UUIDGenerator) GeneratorInteractor {
+func NewGeneratorInteractor(uuidGenerator usecase_repository.UUIDGenerator) *generatorInteractor {
 	return &generatorInteractor{uuidGenerator}
 }
 

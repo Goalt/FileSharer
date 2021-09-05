@@ -2,9 +2,6 @@ package config
 
 import "fmt"
 
-const FileInfoTableName = "file_info"
-const DsnFormat = "%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&parseTime=True&loc=Local"
-
 type Config struct {
 	DebugLevel  int
 	MaxFileSize int //Max file size in bytes

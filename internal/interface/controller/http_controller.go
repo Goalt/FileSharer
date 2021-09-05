@@ -26,7 +26,7 @@ type httpController struct {
 	logger usecase_repository.Logger
 }
 
-func NewHTTPController(maxFileSize int, fileInteractor interactor.FileInteractor, logger usecase_repository.Logger, base64Repository usecase_repository.Base64Repository) HTTPController {
+func NewHTTPController(maxFileSize int, fileInteractor interactor.FileInteractor, logger usecase_repository.Logger, base64Repository usecase_repository.Base64Repository) *httpController {
 	return &httpController{maxFileSize, fileInteractor, base64Repository, handler{}, validator.New(), logger}
 }
 

@@ -3,6 +3,7 @@ package http
 import (
 	"strconv"
 
+	"github.com/Goalt/FileSharer/internal/config"
 	"github.com/Goalt/FileSharer/internal/interface/controller"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -36,15 +37,14 @@ func NewHTTPServer(port int, httpController controller.HTTPController) Server {
 
 	e := echo.New()
 
-	// TODO в константы
+	e.File("/", "html/index.html")
 	e.Static("/imgs", "html/imgs/")
 	e.File("/style.css", "html/style.css")
-	e.File("/", "html/index.html")
 	e.File("/script.js", "html/script.js")
 	e.File("/jquery-3.6.0.min.js", "html/jquery-3.6.0.min.js")
 
-	e.POST("/api/file", server.upload)
-	e.GET("/api/file", server.download)
+	e.POST(config.FilePath, server.upload)
+	e.GET(config.FilePath, server.download)
 
 	e.Use(middleware.RequestID())
 	e.Use(middleware.LoggerWithConfig(middleware.DefaultLoggerConfig))

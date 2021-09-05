@@ -14,7 +14,7 @@ type cryptoInteractor struct {
 	crypto usecase_repository.CryptoRepository
 }
 
-func NewCryptoInteractor(crypto usecase_repository.CryptoRepository) CryptoInteractor {
+func NewCryptoInteractor(crypto usecase_repository.CryptoRepository) *cryptoInteractor {
 	return &cryptoInteractor{crypto}
 }
 
