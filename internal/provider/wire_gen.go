@@ -38,8 +38,9 @@ func InitializeApp(cfg config.Config, context2 context.Context) (Application, fu
 	uuidGenerator := provideUUIDGenerator()
 	generatorInteractor := provideGeneratorInteractor(uuidGenerator)
 	fileInteractor := provideCalculatorInteractor(fileInfoRepository, fileSystemRepository, interactorCryptoInteractor, generatorInteractor)
+	base64Repository := provideBase64Repository()
 	logger := provideLogger(loggerInterface)
-	httpController := provideHTTPController(maxFileSize, fileInteractor, logger)
+	httpController := provideHTTPController(maxFileSize, fileInteractor, base64Repository, logger)
 	httpServer := provideServer(server, httpController)
 	application := provideApp(httpServer, cfg, context2, loggerInterface)
 	return application, func() {

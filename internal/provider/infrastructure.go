@@ -52,6 +52,10 @@ func provideUUIDGenerator() usecase_repository.UUIDGenerator {
 	return infrastructure_repository.NewUUIDGenerator()
 }
 
+func provideBase64Repository() usecase_repository.Base64Repository {
+	return infrastructure_repository.NewBase64Repository()
+}
+
 func ProvideGORM(config config.Database, ctx context.Context, log logger.Interface) (*gorm.DB, func()) {
 	var err error
 	var db *gorm.DB
@@ -96,4 +100,5 @@ var infrastructureSet = wire.NewSet(
 	ProvideGORM,
 	provideLogger,
 	provideServicesCleanup,
+	provideBase64Repository,
 )

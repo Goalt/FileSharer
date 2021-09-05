@@ -7,8 +7,13 @@ import (
 	"github.com/google/wire"
 )
 
-func provideHTTPController(maxFileSize MaxFileSize, interactor interactor.FileInteractor, log usecase_repository.Logger) controller.HTTPController {
-	return controller.NewHTTPController(int(maxFileSize), interactor, log)
+func provideHTTPController(
+	maxFileSize MaxFileSize,
+	interactor interactor.FileInteractor,
+	base64Repository usecase_repository.Base64Repository,
+	log usecase_repository.Logger,
+) controller.HTTPController {
+	return controller.NewHTTPController(int(maxFileSize), interactor, log, base64Repository)
 }
 
 var interfaceSet = wire.NewSet(provideHTTPController)
