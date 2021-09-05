@@ -36,6 +36,8 @@ func NewHTTPController(maxFileSize int, fileInteractor interactor.FileInteractor
 }
 
 func (hc *httpController) Upload(httpCtx HTTPContext) error {
+	log := hc.logger.WithPrefix("req_id=" + httpCtx.GetReqId())
+
 	fileData, fileName, _, err := httpCtx.GetFormFile(hc.maxFileSize)
 	switch {
 	case errors.Is(err, errors.ErrMaxFileSize):
@@ -55,7 +57,7 @@ func (hc *httpController) Upload(httpCtx HTTPContext) error {
 		return hc.Fail(httpCtx, errors.ErrFileFormat)
 	}
 
-	token, err := hc.fileInteractor.Upload(httpCtx.Context(), file)
+	token, err := hc.fileInteractor.Upload(httpCtx.Context(), file, log)
 	if err != nil {
 		return hc.Fail(httpCtx, err)
 	}
@@ -64,13 +66,15 @@ func (hc *httpController) Upload(httpCtx HTTPContext) error {
 }
 
 func (hc *httpController) Download(httpCtx HTTPContext) error {
+	log := hc.logger.WithPrefix("req_id=" + httpCtx.GetReqId())
+
 	token := domain.Token{Id: httpCtx.GetQuery(tokenQuery)}
 	if err := hc.Validate.Struct(token); err != nil {
 		hc.logger.Error(httpCtx.Context(), fmt.Sprintf("input data validate error %v", err))
 		return hc.Fail(httpCtx, errors.ErrTokenFormat)
 	}
 
-	file, err := hc.fileInteractor.Download(httpCtx.Context(), token)
+	file, err := hc.fileInteractor.Download(httpCtx.Context(), token, log)
 	if err != nil {
 		return hc.Fail(httpCtx, err)
 	}

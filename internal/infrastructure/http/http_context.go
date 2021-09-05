@@ -66,3 +66,7 @@ func (c *Context) File(httpCode int, data []byte, fileName string) error {
 
 	return nil
 }
+
+func (c *Context) GetReqId() string {
+	return c.c.Response().Header().Get(echo.HeaderXRequestID)
+}

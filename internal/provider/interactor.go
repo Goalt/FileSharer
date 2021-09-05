@@ -11,14 +11,12 @@ func provideCalculatorInteractor(
 	fileSystemRepository usecase_repository.FileSystemRepository,
 	cryptoInteractor interactor.CryptoInteractor,
 	generatorInteractor interactor.GeneratorInteractor,
-	logger usecase_repository.Logger,
 ) interactor.FileInteractor {
 	return interactor.NewFileInteractor(
 		fileInfoRepository,
 		fileSystemRepository,
 		cryptoInteractor,
 		generatorInteractor,
-		logger,
 	)
 }
 

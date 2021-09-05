@@ -7,6 +7,7 @@ import (
 type HTTPContext interface {
 	Context() context.Context
 
+	GetReqId() string
 	GetFormFile(size int) ([]byte, string, int, error)
 	GetQuery(key string) string
 

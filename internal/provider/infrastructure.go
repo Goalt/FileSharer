@@ -79,7 +79,7 @@ func ProvideGORM(config config.Database, ctx context.Context, log logger.Interfa
 }
 
 func provideLogger(log logger.Interface) usecase_repository.Logger {
-	return log
+	return infrastructure_repository.NewLogger(log)
 }
 
 func provideServicesCleanup(cleanup func()) ServicesCleanup {
