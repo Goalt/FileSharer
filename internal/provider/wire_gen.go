@@ -41,7 +41,7 @@ func InitializeApp(cfg config.Config, context2 context.Context) (Application, fu
 	fileInteractor := provideCalculatorInteractor(fileInfoRepository, fileSystemRepository, interactorCryptoInteractor, generatorInteractor, logger)
 	httpController := provideHTTPController(maxFileSize, fileInteractor, loggerInterface)
 	httpServer := provideServer(server, httpController)
-	application := provideApp(httpServer, cfg, context2)
+	application := provideApp(httpServer, cfg, context2, loggerInterface)
 	return application, func() {
 		cleanup()
 	}, nil
@@ -53,8 +53,8 @@ type Application struct {
 	ctx context.Context
 	log logger.Interface
 
-	server  http.Server
-	cleanup ServicesCleanup
+	server http.Server
+	config config.Config
 }
 
 func (a *Application) Run() error {
@@ -76,9 +76,11 @@ func (a *Application) Run() error {
 	return nil
 }
 
-func provideApp(server http.Server, cfg config.Config, ctx context.Context) Application {
+func provideApp(server http.Server, cfg config.Config, ctx context.Context, log logger.Interface) Application {
 	return Application{
 		server: server,
 		ctx:    ctx,
+		config: cfg,
+		log:    log,
 	}
 }

@@ -16,7 +16,7 @@ var (
 	}
 
 	ErrMaxFileSize = HttpError{
-		ResponseCode: http.StatusBadRequest,
+		ResponseCode: http.StatusRequestEntityTooLarge,
 		Text:         fmt.Sprintf("max file size bytes (%v bytes)", MaxFileSize),
 		ErrorCode:    2,
 	}

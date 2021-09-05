@@ -14,8 +14,8 @@ type Application struct {
 	ctx context.Context
 	log logger.Interface
 
-	server  http.Server
-	cleanup ServicesCleanup
+	server http.Server
+	config config.Config
 }
 
 func (a *Application) Run() error {
@@ -38,10 +38,12 @@ func (a *Application) Run() error {
 	return nil
 }
 
-func provideApp(server http.Server, cfg config.Config, ctx context.Context) Application {
+func provideApp(server http.Server, cfg config.Config, ctx context.Context, log logger.Interface) Application {
 	return Application{
 		server: server,
 		ctx:    ctx,
+		config: cfg,
+		log:    log,
 	}
 }
 

@@ -2,13 +2,13 @@ package controller
 
 import (
 	"context"
-	"io"
 )
 
 type HTTPContext interface {
-	HeaderGet(string) string
-	BodyReader() io.Reader
-	JSON(httpCode int, value interface{}) error
 	Context() context.Context
-	QueryGet(key string) string
+
+	GetFormFile(size int) ([]byte, string, int, error)
+	GetQuery(key string) string
+
+	JSON(httpCode int, value interface{}) error
 }

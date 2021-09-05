@@ -36,14 +36,15 @@ func NewHTTPServer(port int, httpController controller.HTTPController) Server {
 
 	e := echo.New()
 
+	// TODO в константы
 	e.Static("/imgs", "html/imgs/")
 	e.File("/style.css", "html/style.css")
 	e.File("/", "html/index.html")
 	e.File("/script.js", "html/script.js")
 	e.File("/jquery-3.6.0.min.js", "html/jquery-3.6.0.min.js")
 
-	e.POST("/api/upload", server.upload)
-	e.GET("/api/download", server.download)
+	e.POST("/api/file", server.upload)
+	e.GET("/api/file", server.download)
 
 	// Req id
 	e.Use(middleware.RequestID())

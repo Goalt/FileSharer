@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    const urlUpload = 'https://dev.konkov.xyz/api/upload';
-    const urlDownload = 'https://dev.konkov.xyz/api/download';
+    const urlUpload = 'https://dev.konkov.xyz/api/file';
+    const urlDownload = 'https://dev.konkov.xyz/api/file';
 
     $('#uploadButton').click(function(e) {
         e.preventDefault();

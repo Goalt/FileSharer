@@ -1,0 +1,53 @@
+openapi: 3.0.0
+info:
+  title: Filesharer's API
+  description: API to upload and download by token
+  version: 1.0.0
+servers:
+  - url: https://dev.konkov.xyz/api
+    description: Main server
+paths:
+  /file:
+    get:
+      summary: Returns file
+      parameters:
+        - in: query
+          name: token_id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Succeeded request
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad request (provided token_id was invalid)
+        '404':
+          description: File with such token were not found
+    post:
+      summary: Upload file and returns token_id
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  token_id:
+                    type: string
+        '413':
+          description: File's size is too big

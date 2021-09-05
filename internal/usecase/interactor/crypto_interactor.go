@@ -29,6 +29,12 @@ func (ci *cryptoInteractor) Encrypt(file domain.File) (domain.File, error) {
 		return domain.File{}, err
 	}
 
+	decryptedFileNameOrigin, err := ci.crypto.DecryptString(encryptedFileNameOrigin)
+	if err != nil {
+		return domain.File{}, err
+	}
+	_ = decryptedFileNameOrigin
+
 	return domain.File{
 		Data:           encryptedData,
 		FileNameOrigin: encryptedFileNameOrigin,

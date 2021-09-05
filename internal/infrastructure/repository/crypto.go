@@ -3,13 +3,14 @@ package repository
 import (
 	"crypto/aes"
 	"crypto/cipher"
-
-	"github.com/Goalt/FileSharer/internal/errors"
+	"crypto/rand"
+	"encoding/base64"
+	"errors"
+	"io"
 )
 
 type AESCrypto struct {
 	cipher cipher.Block
-	prefix []byte
 }
 
 func NewAESCrypto(key []byte) (*AESCrypto, error) {
@@ -18,26 +19,44 @@ func NewAESCrypto(key []byte) (*AESCrypto, error) {
 		return nil, err
 	}
 
-	return &AESCrypto{cipher, make([]byte, aes.BlockSize)}, nil
+	return &AESCrypto{cipher}, nil
 }
 
 func (a *AESCrypto) Encrypt(data []byte) ([]byte, error) {
-	data = append(data, a.prefix...)
-	dst := make([]byte, len(data))
-	a.cipher.Encrypt(dst, data)
+	aesGCM, err := cipher.NewGCM(a.cipher)
+	if err != nil {
+		return nil, err
+	}
 
-	return dst, nil
+	nonce := make([]byte, aesGCM.NonceSize())
+	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
+		return nil, err
+	}
+
+	ciphertext := aesGCM.Seal(nonce, nonce, data, nil)
+
+	return ciphertext, nil
 }
 
 func (a *AESCrypto) Decrypt(data []byte) ([]byte, error) {
-	if len(data) < aes.BlockSize {
-		return nil, errors.ErrIncorrectDataSize
+	aesGCM, err := cipher.NewGCM(a.cipher)
+	if err != nil {
+		return nil, err
 	}
 
-	dst := make([]byte, len(data))
-	a.cipher.Decrypt(dst, data)
+	nonceSize := aesGCM.NonceSize()
+	if len(data) < nonceSize {
+		return nil, errors.New("invalid data's size")
+	}
 
-	return dst[:len(dst)-aes.BlockSize], nil
+	nonce, ciphertext := data[:nonceSize], data[nonceSize:]
+
+	decrypted, err := aesGCM.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return decrypted, nil
 }
 
 func (a *AESCrypto) EncryptString(data string) (string, error) {
@@ -46,11 +65,16 @@ func (a *AESCrypto) EncryptString(data string) (string, error) {
 		return "", err
 	}
 
-	return string(dst), nil
+	return base64.URLEncoding.EncodeToString(dst), nil
 }
 
 func (a *AESCrypto) DecryptString(data string) (string, error) {
-	dst, err := a.Decrypt([]byte(data))
+	dataRaw, err := base64.URLEncoding.DecodeString(data)
+	if err != nil {
+		return "", err
+	}
+
+	dst, err := a.Decrypt(dataRaw)
 	if err != nil {
 		return "", err
 	}
