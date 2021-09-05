@@ -37,10 +37,18 @@ $(document).ready(function() {
         success = function(data, textStatus, jqXHR) {
             console.log(data, textStatus, jqXHR)
 
-            var blob=new Blob([atob(data.data)]);
+            // check for a filename
+            var filename = "";
+            var disposition = jqXHR.getResponseHeader('Content-Disposition');
+            if (disposition && disposition.indexOf('attachment') !== -1) {
+                var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                var matches = filenameRegex.exec(disposition);
+                if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+            }
+            
             var link=document.createElement('a');
-            link.href=window.URL.createObjectURL(blob);
-            link.download=data.file_name;
+            link.href=window.URL.createObjectURL(data);
+            link.download=filename;
             link.click();
         }
 
@@ -52,6 +60,9 @@ $(document).ready(function() {
         $.ajax({
             type: 'GET',
             url: urlWithParameters,
+            xhrFields: {
+                responseType: 'blob' 
+            },
             data: null,
             processData: false,
             contentType: false,

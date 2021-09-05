@@ -20,3 +20,7 @@ func (h *handler) Fail(ctx HTTPContext, body interface{}) error {
 
 	return ctx.JSON(http.StatusBadRequest, body)
 }
+
+func (h *handler) File(ctx HTTPContext, data []byte, fileName string) error {
+	return ctx.File(http.StatusOK, data, fileName)
+}

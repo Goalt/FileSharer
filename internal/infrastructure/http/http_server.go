@@ -46,9 +46,12 @@ func NewHTTPServer(port int, httpController controller.HTTPController) Server {
 	e.POST("/api/file", server.upload)
 	e.GET("/api/file", server.download)
 
-	// Req id
 	e.Use(middleware.RequestID())
 	e.Use(middleware.LoggerWithConfig(middleware.DefaultLoggerConfig))
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+	}))
 
 	server.e = e
 

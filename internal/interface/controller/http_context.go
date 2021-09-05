@@ -11,4 +11,5 @@ type HTTPContext interface {
 	GetQuery(key string) string
 
 	JSON(httpCode int, value interface{}) error
+	File(httpCode int, data []byte, fileName string) error
 }

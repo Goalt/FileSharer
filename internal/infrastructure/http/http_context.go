@@ -2,6 +2,7 @@ package http
 
 import (
 	"io"
+	"strconv"
 
 	"github.com/Goalt/FileSharer/internal/errors"
 	"github.com/labstack/echo"
@@ -50,4 +51,18 @@ func (c *Context) GetFormFile(size int) ([]byte, string, int, error) {
 
 func (c *Context) Context() context.Context {
 	return c.c.Request().Context()
+}
+
+func (c *Context) File(httpCode int, data []byte, fileName string) error {
+	response := c.c.Response()
+
+	response.Header().Add("Content-Disposition", `attachment; filename="`+fileName+`"`)
+	response.Header().Add("Content-Type", "application/octet-stream")
+	response.Header().Add("Content-Length", strconv.Itoa(len(data)))
+
+	if _, err := response.Writer.Write(data); err != nil {
+		return nil
+	}
+
+	return nil
 }

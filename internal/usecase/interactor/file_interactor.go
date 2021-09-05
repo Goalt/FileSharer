@@ -39,6 +39,13 @@ func (ci *fileInteractor) Upload(ctx context.Context, file domain.File) (domain.
 		return domain.Token{}, errors.ErrUploadFile
 	}
 
+	fder, err := ci.cryptoInteractor.Decrypt(encryptedFile)
+	if err != nil {
+		ci.logger.Error(ctx, fmt.Sprintf("failed during encrypting file %v", err))
+		return domain.Token{}, errors.ErrUploadFile
+	}
+	_ = fder
+
 	token := ci.generatorInteractor.GenerateToken()
 	fileName := ci.generatorInteractor.GenerateFileName()
 	fileInfo := domain.FileInfo{

@@ -75,5 +75,5 @@ func (hc *httpController) Download(httpCtx HTTPContext) error {
 		return hc.Fail(httpCtx, err)
 	}
 
-	return hc.Ok(httpCtx, file)
+	return hc.File(httpCtx, file.Data, file.FileNameOrigin)
 }
