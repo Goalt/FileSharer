@@ -3,6 +3,7 @@ build:
 run:
 	docker-compose -p file_sharer -f docker/docker-compose.yml up
 clean:
+	docker stop file_sharer ; docker rm file_sharer || true
 	docker stop file_sharer_db_1; docker rm file_sharer_db_1 || true
 	docker volume rm file_sharer_db_data || true
 generate:
@@ -13,3 +14,5 @@ sync:
 allDev: sync
 	ssh dev2 "cd ./.vscode_proj/Filesharer && make all"
 all: clean build run
+deploy: clean build
+	docker-compose -p file_sharer -f docker/docker-compose.yml up -d

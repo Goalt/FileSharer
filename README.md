@@ -1,5 +1,6 @@
 # FileSharer
-FileSharer is a application (API + website) to store and load files using unique tokens.
+FileSharer is a application (API + website) to store and load files using unique tokens.  
+Swagger UI: https://fs.konkov.xyz
 
 ## Requirements
 1. Docker
@@ -12,7 +13,7 @@ make build
 ```
 
 ## Run
-It runs services. Application will available on localhost:20000
+It runs services.
 ```bash
 make run
 ```

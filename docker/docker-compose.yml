@@ -1,14 +1,14 @@
 version: "3.7"
 
 services:
-  # app:
-  #   depends_on: [db]
-  #   image: file_sharer:latest
-  #   container_name: file_sharer
-  #   ports: [33333:33333]
-  #   restart: always
-  #   volumes: [fs_data:/data]
-  #   env_file: docker_env.env
+  app:
+    depends_on: [db]
+    image: file_sharer:latest
+    container_name: file_sharer
+    ports: [20000:33333]
+    restart: always
+    volumes: [fs_data:/data]
+    env_file: docker_env.env
   db:
     image: mariadb:latest
     volumes:

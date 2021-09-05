@@ -30,7 +30,7 @@ RUN apk add ca-certificates
 # Set the Current Working Directory inside the container
 WORKDIR /file-sharer-app
 
-COPY --from=build_base /file-sharer-app/html ./html
+COPY --from=build_base /file-sharer-app/swagger ./swagger
 COPY --from=build_base /file-sharer-app/file_sharer_api ./
 
 # This container exposes port 8080 to the outside world

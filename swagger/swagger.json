@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://dev.konkov.xyz/api",
+      "url": "https://fs.konkov.xyz/api",
       "description": "Main server"
     }
   ],
