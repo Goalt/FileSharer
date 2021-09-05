@@ -1,6 +1,7 @@
 package http
 
 import (
+	"net/http"
 	"strconv"
 
 	"github.com/Goalt/FileSharer/internal/config"
@@ -37,14 +38,18 @@ func NewHTTPServer(port int, httpController controller.HTTPController) Server {
 
 	e := echo.New()
 
-	e.File("/", "html/index.html")
-	e.Static("/imgs", "html/imgs/")
-	e.File("/style.css", "html/style.css")
-	e.File("/script.js", "html/script.js")
-	e.File("/jquery-3.6.0.min.js", "html/jquery-3.6.0.min.js")
+	// e.File("/", "docs/index.html")
+	// e.Static("/", "docs/")
+	e.Static("/", "swagger/")
+
+	// e.Static("/imgs", "html/imgs/")
+	// e.File("/style.css", "html/style.css")
+	// e.File("/script.js", "html/script.js")
+	// e.File("/jquery-3.6.0.min.js", "html/jquery-3.6.0.min.js")
 
 	e.POST(config.FilePath, server.upload)
 	e.GET(config.FilePath, server.download)
+	e.OPTIONS(config.FilePath, server.handleOptions)
 
 	e.Use(middleware.RequestID())
 	e.Use(middleware.LoggerWithConfig(middleware.DefaultLoggerConfig))
@@ -64,4 +69,8 @@ func (hs *httpServer) upload(c echo.Context) error {
 
 func (hs *httpServer) download(c echo.Context) error {
 	return hs.httpController.Download(&Context{c: c})
+}
+
+func (hs *httpServer) handleOptions(c echo.Context) error {
+	return c.JSON(http.StatusOK, nil)
 }
