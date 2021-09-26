@@ -1,10 +1,11 @@
 package usecase_repository
 
-import "context"
-
 type Logger interface {
-	Info(context.Context, string, ...interface{})
-	Warn(context.Context, string, ...interface{})
-	Error(context.Context, string, ...interface{})
-	WithPrefix(string) Logger
+	Info(...interface{})
+	Warn(...interface{})
+	Error(...interface{})
+	Errorf(string, ...interface{})
+	Infof(string, ...interface{})
+	WithField(string, interface{}) Logger
+	Printf(string, ...interface{})
 }

@@ -2,7 +2,7 @@ package interactor
 
 import (
 	"github.com/Goalt/FileSharer/internal/domain"
-	usecase_repository "github.com/Goalt/FileSharer/internal/usecase/repository"
+	repository "github.com/Goalt/FileSharer/internal/usecase/repository"
 )
 
 type GeneratorInteractor interface {
@@ -11,10 +11,10 @@ type GeneratorInteractor interface {
 }
 
 type generatorInteractor struct {
-	uuidGenerator usecase_repository.UUIDGenerator
+	uuidGenerator repository.UUIDGenerator
 }
 
-func NewGeneratorInteractor(uuidGenerator usecase_repository.UUIDGenerator) *generatorInteractor {
+func NewGeneratorInteractor(uuidGenerator repository.UUIDGenerator) *generatorInteractor {
 	return &generatorInteractor{uuidGenerator}
 }
 

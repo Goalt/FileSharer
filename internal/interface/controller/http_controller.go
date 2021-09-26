@@ -1,12 +1,10 @@
 package controller
 
 import (
-	"fmt"
-
 	"github.com/Goalt/FileSharer/internal/domain"
 	"github.com/Goalt/FileSharer/internal/errors"
 	"github.com/Goalt/FileSharer/internal/usecase/interactor"
-	usecase_repository "github.com/Goalt/FileSharer/internal/usecase/repository"
+	repository "github.com/Goalt/FileSharer/internal/usecase/repository"
 	"github.com/go-playground/validator"
 )
 
@@ -20,26 +18,26 @@ type HTTPController interface {
 type httpController struct {
 	maxFileSize      int // MaxFileSize in bytes
 	fileInteractor   interactor.FileInteractor
-	base64Repository usecase_repository.Base64Repository
+	base64Repository repository.Base64Repository
 	handler
 	*validator.Validate
-	logger usecase_repository.Logger
+	logger repository.Logger
 }
 
-func NewHTTPController(maxFileSize int, fileInteractor interactor.FileInteractor, logger usecase_repository.Logger, base64Repository usecase_repository.Base64Repository) *httpController {
+func NewHTTPController(maxFileSize int, fileInteractor interactor.FileInteractor, logger repository.Logger, base64Repository repository.Base64Repository) *httpController {
 	return &httpController{maxFileSize, fileInteractor, base64Repository, handler{}, validator.New(), logger}
 }
 
 func (hc *httpController) Upload(httpCtx HTTPContext) error {
-	log := hc.logger.WithPrefix("req_id=" + httpCtx.GetReqId())
+	log := hc.logger.WithField("req_id", httpCtx.GetReqId())
 
 	fileData, fileName, _, err := httpCtx.GetFormFile(hc.maxFileSize)
 	switch {
 	case errors.Is(err, errors.ErrMaxFileSize):
-		log.Info(httpCtx.Context(), err.Error())
+		log.Info(err)
 		return hc.Fail(httpCtx, errors.ErrMaxFileSize)
 	case err != nil:
-		log.Error(httpCtx.Context(), fmt.Sprintf("file read error from form file: %v", err))
+		log.Error(err)
 	}
 
 	file := domain.File{
@@ -48,7 +46,7 @@ func (hc *httpController) Upload(httpCtx HTTPContext) error {
 	}
 
 	if err := hc.Validate.Struct(file); err != nil {
-		log.Error(httpCtx.Context(), fmt.Sprintf("input data validate error %v", err))
+		log.Error(err)
 		return hc.Fail(httpCtx, errors.ErrFileFormat)
 	}
 
@@ -63,18 +61,18 @@ func (hc *httpController) Upload(httpCtx HTTPContext) error {
 }
 
 func (hc *httpController) Download(httpCtx HTTPContext) error {
-	log := hc.logger.WithPrefix("req_id=" + httpCtx.GetReqId())
+	log := hc.logger.WithField("req_id", httpCtx.GetReqId())
 
 	var err error
 	token := domain.Token{Id: httpCtx.GetQuery(tokenQuery)}
 	token.Id, err = hc.base64Repository.Decode(token.Id)
 	if err != nil {
-		log.Error(httpCtx.Context(), fmt.Sprintf("token decode error %v", err))
+		log.Error(err)
 		return hc.Fail(httpCtx, errors.ErrTokenFormat)
 	}
 
 	if err := hc.Validate.Struct(token); err != nil {
-		log.Error(httpCtx.Context(), fmt.Sprintf("input data validate error %v", err))
+		log.Error(err)
 		return hc.Fail(httpCtx, errors.ErrTokenFormat)
 	}
 

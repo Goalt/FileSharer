@@ -4,15 +4,16 @@ package provider
 
 import (
 	"context"
+
 	"github.com/Goalt/FileSharer/internal/config"
 	"github.com/Goalt/FileSharer/internal/infrastructure/http"
+	usecase_repository "github.com/Goalt/FileSharer/internal/usecase/repository"
 	"github.com/google/wire"
-	"gorm.io/gorm/logger"
 )
 
 type Application struct {
 	ctx context.Context
-	log logger.Interface
+	log usecase_repository.Logger
 
 	server http.Server
 	config config.Config
@@ -23,7 +24,7 @@ func (a *Application) Run() error {
 	go func() {
 		err := a.server.Run()
 		if err != nil {
-			a.log.Error(a.ctx, err.Error())
+			a.log.Error(err)
 		}
 	}()
 
@@ -32,13 +33,13 @@ func (a *Application) Run() error {
 	//Server stop
 	err := a.server.Stop()
 	if err != nil {
-		a.log.Error(a.ctx, err.Error())
+		a.log.Error(err)
 	}
 
 	return nil
 }
 
-func provideApp(server http.Server, cfg config.Config, ctx context.Context, log logger.Interface) Application {
+func provideApp(server http.Server, cfg config.Config, ctx context.Context, log usecase_repository.Logger) Application {
 	return Application{
 		server: server,
 		ctx:    ctx,

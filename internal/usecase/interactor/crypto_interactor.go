@@ -2,7 +2,7 @@ package interactor
 
 import (
 	"github.com/Goalt/FileSharer/internal/domain"
-	usecase_repository "github.com/Goalt/FileSharer/internal/usecase/repository"
+	repository "github.com/Goalt/FileSharer/internal/usecase/repository"
 )
 
 type CryptoInteractor interface {
@@ -11,10 +11,10 @@ type CryptoInteractor interface {
 }
 
 type cryptoInteractor struct {
-	crypto usecase_repository.CryptoRepository
+	crypto repository.CryptoRepository
 }
 
-func NewCryptoInteractor(crypto usecase_repository.CryptoRepository) *cryptoInteractor {
+func NewCryptoInteractor(crypto repository.CryptoRepository) *cryptoInteractor {
 	return &cryptoInteractor{crypto}
 }
 

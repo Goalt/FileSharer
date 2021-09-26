@@ -1,12 +1,8 @@
 package errors
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 )
-
-var MaxFileSize int
 
 var (
 	ErrFileFormat = HttpError{
@@ -17,7 +13,7 @@ var (
 
 	ErrMaxFileSize = HttpError{
 		ResponseCode: http.StatusRequestEntityTooLarge,
-		Text:         fmt.Sprintf("max file size bytes (%v bytes)", MaxFileSize),
+		Text:         "max file size bytes",
 		ErrorCode:    2,
 	}
 
@@ -44,8 +40,4 @@ var (
 		Text:         "failed to download file",
 		ErrorCode:    6,
 	}
-)
-
-var (
-	ErrIncorrectDataSize = errors.New("data size less aes.BlockSize")
 )

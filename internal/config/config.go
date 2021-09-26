@@ -3,12 +3,17 @@ package config
 import "fmt"
 
 type Config struct {
-	DebugLevel  int
 	MaxFileSize int //Max file size in bytes
 	RootPath    string
 	Key         []byte
+	Logger      Logger
 	Server      Server
 	Database    Database
+}
+
+type Logger struct {
+	SetReportCaller bool
+	Level           int
 }
 
 type Server struct {

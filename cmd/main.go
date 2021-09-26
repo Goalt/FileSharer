@@ -8,7 +8,6 @@ import (
 	_ "github.com/Goalt/FileSharer/cmd/subcomands/file_sharer_migrations"
 	"github.com/Goalt/FileSharer/cmd/variables"
 	"github.com/Goalt/FileSharer/internal/config"
-	"github.com/Goalt/FileSharer/internal/errors"
 	"github.com/Goalt/FileSharer/internal/provider"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/net/context"
@@ -63,9 +62,12 @@ func main() {
 		Action: func(ctx *cli.Context) error {
 			cfg := config.Config{
 				MaxFileSize: ctx.Int(variables.MaxFileSize),
-				DebugLevel:  ctx.Int(variables.DebugLevel),
 				RootPath:    ctx.String(variables.RootPath),
 				Key:         []byte(ctx.String(variables.SecretKey)),
+				Logger: config.Logger{
+					SetReportCaller: true,
+					Level:           config.InfoLevel,
+				},
 				Database: config.Database{
 					Host:     ctx.String(variables.MysqlHost),
 					Port:     ctx.String(variables.MysqlPort),
@@ -77,7 +79,6 @@ func main() {
 					Port: 33333,
 				},
 			}
-			errors.MaxFileSize = cfg.MaxFileSize
 			fmt.Printf("%+v\n", cfg)
 
 			signalCtx, _ := context.WithCancel(context.Background())

@@ -9,7 +9,7 @@ import (
 	"context"
 	"github.com/Goalt/FileSharer/internal/config"
 	"github.com/Goalt/FileSharer/internal/infrastructure/http"
-	"gorm.io/gorm/logger"
+	"github.com/Goalt/FileSharer/internal/usecase/repository"
 )
 
 // Injectors from wire.go:
@@ -18,9 +18,9 @@ func InitializeApp(cfg config.Config, context2 context.Context) (Application, fu
 	server := provideServerConfig(cfg)
 	maxFileSize := provideMaxFileSize(cfg)
 	database := provideDatabasesConfig(cfg)
-	debugLevel := provideDebugLevel(cfg)
-	loggerInterface := ProvideLoggerGorm(debugLevel)
-	db, cleanup := ProvideGORM(database, context2, loggerInterface)
+	logger := provideCnfLogger(cfg)
+	usecase_repositoryLogger := ProvideLogger(logger)
+	db, cleanup := ProvideGORM(database, context2, usecase_repositoryLogger)
 	fileInfoRepository := provideFileInfoRepository(db)
 	rootPath := provideRootPath(cfg)
 	fileSystemRepository, err := provideFileSystemRepository(rootPath)
@@ -39,10 +39,9 @@ func InitializeApp(cfg config.Config, context2 context.Context) (Application, fu
 	generatorInteractor := provideGeneratorInteractor(uuidGenerator)
 	fileInteractor := provideCalculatorInteractor(fileInfoRepository, fileSystemRepository, interactorCryptoInteractor, generatorInteractor)
 	base64Repository := provideBase64Repository()
-	logger := provideLogger(loggerInterface)
-	httpController := provideHTTPController(maxFileSize, fileInteractor, base64Repository, logger)
+	httpController := provideHTTPController(maxFileSize, fileInteractor, base64Repository, usecase_repositoryLogger)
 	httpServer := provideServer(server, httpController)
-	application := provideApp(httpServer, cfg, context2, loggerInterface)
+	application := provideApp(httpServer, cfg, context2, usecase_repositoryLogger)
 	return application, func() {
 		cleanup()
 	}, nil
@@ -52,7 +51,7 @@ func InitializeApp(cfg config.Config, context2 context.Context) (Application, fu
 
 type Application struct {
 	ctx context.Context
-	log logger.Interface
+	log usecase_repository.Logger
 
 	server http.Server
 	config config.Config
@@ -63,7 +62,7 @@ func (a *Application) Run() error {
 	go func() {
 		err := a.server.Run()
 		if err != nil {
-			a.log.Error(a.ctx, err.Error())
+			a.log.Error(err)
 		}
 	}()
 
@@ -71,13 +70,13 @@ func (a *Application) Run() error {
 
 	err := a.server.Stop()
 	if err != nil {
-		a.log.Error(a.ctx, err.Error())
+		a.log.Error(err)
 	}
 
 	return nil
 }
 
-func provideApp(server http.Server, cfg config.Config, ctx context.Context, log logger.Interface) Application {
+func provideApp(server http.Server, cfg config.Config, ctx context.Context, log usecase_repository.Logger) Application {
 	return Application{
 		server: server,
 		ctx:    ctx,

@@ -1,7 +1,6 @@
 package file_sharer_migrations
 
 import (
-	"fmt"
 	"net"
 	"time"
 
@@ -42,7 +41,10 @@ func init() {
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			logger := provider.ProvideLoggerGorm(4)
+			logger := provider.ProvideLogger(config.Logger{
+				SetReportCaller: true,
+				Level:           config.WarnLevel,
+			})
 
 			configDB := config.Database{
 				Host:     ctx.String(variables.MysqlHost),
@@ -62,7 +64,7 @@ func init() {
 			for {
 				driver, err = mysql.New(configDB.GetDsn())
 				if _, ok := err.(*net.OpError); ok {
-					logger.Info(ctx.Context, "db unavailable, sleep for 5 seconds")
+					logger.Info("db unavailable, sleep for 5 seconds")
 					time.Sleep(time.Second * 5)
 					continue
 				}
@@ -73,9 +75,9 @@ func init() {
 			// Run all up migrations
 			applied, err := migration.Migrate(driver, embedSource, migration.Up, 0)
 			if err != nil {
-				logger.Error(ctx.Context, fmt.Sprintf("migrations failed %v", err))
+				logger.Errorf("migrations failed %v", err)
 			} else {
-				logger.Info(ctx.Context, fmt.Sprintf("applied version %v", applied))
+				logger.Infof("applied version %v", applied)
 			}
 
 			return nil
