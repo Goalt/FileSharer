@@ -2,12 +2,12 @@ version: "3.7"
 
 services:
   app:
-    depends_on: [db]
+    depends_on: [ db ]
     build: .
     container_name: file_sharer
-    ports: [20000:33333]
+    ports: [ "8080:33333" ]
     restart: always
-    volumes: [fs_data:/data]
+    volumes: [ fs_data:/data ]
     env_file: docker/docker_env.env
   db:
     image: mariadb:latest
@@ -15,12 +15,12 @@ services:
       - db_data:/var/lib/mysql
     restart: always
     env_file: docker/docker_env.env
-    ports: [20001:3306]
+    ports: [ "20001:3306" ]
   migrations:
     build: .
     container_name: file_sharer_migrations
     command: file_sharer_migrations
     env_file: docker/docker_env.env
 volumes:
-  db_data: {}
-  fs_data: {}
+  db_data: { }
+  fs_data: { }
