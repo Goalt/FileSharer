@@ -80,8 +80,6 @@ func main() {
 				},
 			}
 			fmt.Printf("%+v\n", cfg)
-			fmt.Println("BUILDKIT_HOST:", os.Getenv("BUILDKIT_HOST"))
-			fmt.Println("OKTETO_REGISTRY_URL", os.Getenv("OKTETO_REGISTRY_URL"))
 
 			signalCtx, _ := context.WithCancel(context.Background())
 			app, cleanup, err := provider.InitializeApp(cfg, signalCtx)

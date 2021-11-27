@@ -9,9 +9,6 @@ services:
     restart: always
     volumes: [ fs_data:/data ]
     env_file: docker/docker_env.env
-    environment:
-      - BUILDKIT_HOST=${BUILDKIT_HOST}
-      - OKTETO_REGISTRY_URL=${OKTETO_REGISTRY_URL}
   db:
     image: mariadb:latest
     volumes:
