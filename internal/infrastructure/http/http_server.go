@@ -46,7 +46,7 @@ func NewHTTPServer(port int, httpController controller.HTTPController) Server {
 	e.Use(middleware.RequestID())
 	e.Use(middleware.LoggerWithConfig(middleware.DefaultLoggerConfig))
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
+		AllowOrigins: []string{"https://app-goalt.cloud.okteto.net", "*"},
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
 	}))
 
