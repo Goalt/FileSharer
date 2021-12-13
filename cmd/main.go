@@ -99,6 +99,8 @@ func main() {
 		},
 	}
 
+	fmt.Print(os.Getwd())
+
 	err := app.Run(os.Args)
 	if err != nil {
 		fmt.Println(err)
