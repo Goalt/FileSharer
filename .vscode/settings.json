@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "host.docker.internal",
+            "port": 20001,
+            "driver": "MariaDB",
+            "name": "db",
+            "database": "file_sharer",
+            "username": "root",
+            "password": "root"
+        }
+    ]
+}
