@@ -37,6 +37,7 @@ func main() {
 			&cli.StringFlag{
 				Name:    variables.SecretKey,
 				EnvVars: []string{variables.SecretKey},
+				DefaultText: "G-KaPdSgVkYp2s5v8y/B?E(H+MbQeThq",
 			},
 			&cli.StringFlag{
 				Name:    variables.MysqlDatabaseName,
@@ -98,7 +99,7 @@ func main() {
 			return nil
 		},
 	}
-	
+
 	err := app.Run(os.Args)
 	if err != nil {
 		fmt.Println(err)

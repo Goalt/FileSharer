@@ -11,7 +11,7 @@ services:
     volumes: [ fs_data:/data ]
     env_file: .env
     environment:
-      - SECRET_KEY=G-KaPdSgVkYp2s5v8y/B?E(H+MbQeThq
+      - SECRET_KEY=${FILE_SHARER_SECRET_KEY}
   db:
     image: mariadb:latest
     volumes:
