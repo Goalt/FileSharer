@@ -4,23 +4,27 @@ services:
   app:
     depends_on: [ db ]
     build: .
+    image: file_sharer
     container_name: file_sharer
     ports: [ "8080:33333" ]
     restart: always
     volumes: [ fs_data:/data ]
-    env_file: configs/docker_env.env
+    env_file: .env
+    environment:
+      - SECRET_KEY=G-KaPdSgVkYp2s5v8y/B?E(H+MbQeThq
   db:
     image: mariadb:latest
     volumes:
       - db_data:/var/lib/mysql
     restart: always
-    env_file: configs/docker_env.env
+    env_file: .env
     ports: [ "20001:3306" ]
   migrations:
     build: .
+    image: file_sharer:migrations
     container_name: file_sharer_migrations
     command: file_sharer_migrations
-    env_file: configs/docker_env.env
+    env_file: .env
 volumes:
   db_data: { }
   fs_data: { }
