@@ -5,8 +5,8 @@
                 "authProtocol": "default"
             },
             "previewLimit": 50,
-            "server": "host.docker.internal",
-            "port": 20001,
+            "server": "db",
+            "port": 3306,
             "driver": "MariaDB",
             "name": "db",
             "database": "file_sharer",
