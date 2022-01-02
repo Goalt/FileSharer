@@ -6,7 +6,7 @@ var subcommandSingleton []*cli.Command
 
 func Add(command *cli.Command) {
 	if subcommandSingleton == nil {
-		subcommandSingleton = make([]*cli.Command, 1, 1)
+		subcommandSingleton = make([]*cli.Command, 1)
 		subcommandSingleton[0] = command
 		return
 	}
