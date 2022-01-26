@@ -19,7 +19,6 @@ services:
     env_file: .env
     ports: [ "20001:3306" ]
   migrations:
-    build: .
     image: ghcr.io/goalt/filesharer:$IMAGE_VERSION
     container_name: file_sharer_migrations
     command: file_sharer_migrations
