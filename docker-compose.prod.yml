@@ -3,7 +3,7 @@ version: "3.7"
 services:
   app:
     depends_on: [ db ]
-    image: file_sharer:$IMAGE_VERSION
+    image: ghcr.io/goalt/filesharer:$IMAGE_VERSION
     container_name: file_sharer
     ports: [ "20002:33333" ]
     restart: always
@@ -20,7 +20,7 @@ services:
     ports: [ "20001:3306" ]
   migrations:
     build: .
-    image: file_sharer:$IMAGE_VERSION
+    image: ghcr.io/goalt/filesharer:$IMAGE_VERSION
     container_name: file_sharer_migrations
     command: file_sharer_migrations
     env_file: .env
