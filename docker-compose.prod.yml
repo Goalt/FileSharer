@@ -5,7 +5,7 @@ services:
     depends_on: [ db ]
     image: file_sharer:$IMAGE_VERSION
     container_name: file_sharer
-    ports: [ "8080:33333" ]
+    ports: [ "20002:33333" ]
     restart: always
     volumes: [ fs_data:/data ]
     env_file: .env
