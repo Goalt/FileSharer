@@ -1,0 +1,3 @@
+environments = {
+    "FILE_SHARER_SECRET_KEY": "$FILE_SHARER_SECRET_KEY",
+}

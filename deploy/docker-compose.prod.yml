@@ -1,0 +1,43 @@
+version: "3.7"
+
+services:
+  app:
+    depends_on: [ db ]
+    image: ghcr.io/goalt/filesharer:$IMAGE_VERSION
+    container_name: file_sharer
+    ports: [ "20002:33333" ]
+    restart: always
+    volumes: [ fs_data:/data ]
+    environment:
+      - SECRET_KEY=${FILE_SHARER_SECRET_KEY}
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=file_sharer
+      - FS_MYSQL_USER=root
+      - FS_MYSQL_PASSWORD=root
+      - FS_MYSQL_HOST=db
+      - FS_MYSQL_PORT=3306
+      - MAX_FILE_SIZE=30000000
+      - DEBUG_LEVEL=4
+      - ROOT_PATH=/
+  db:
+    image: mariadb:latest
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=file_sharer
+    ports: [ "20001:3306" ]
+  migrations:
+    image: ghcr.io/goalt/filesharer:$IMAGE_VERSION
+    container_name: file_sharer_migrations
+    command: file_sharer_migrations
+    environment:
+      - MYSQL_DATABASE=file_sharer
+      - FS_MYSQL_USER=root
+      - FS_MYSQL_PASSWORD=root
+      - FS_MYSQL_HOST=db
+      - FS_MYSQL_PORT=3306
+volumes:
+  db_data: { }
+  fs_data: { }
