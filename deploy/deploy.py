@@ -15,7 +15,7 @@ if __name__ == '__main__':
         exit(1)
 
     # Read compose file
-    composeFile = f = open("deploy/docker-compose.prod.yml")
+    composeFile = f = open("docker-compose.prod.yml")
     compose = f.read()
     composeFile.close()
     
@@ -23,16 +23,6 @@ if __name__ == '__main__':
     procEnv = [
         {"name": "IMAGE_VERSION", "value": versionTag},
     ]
-    
-    # env = prod_env.environments
-    # for key, value in env.items():
-    #     name = key
-    #     val = value 
-
-    #     if value[0] == "$":
-    #         val = os.getenv(value[1:], "")
-
-    #     procEnv.append({"name": name, "value": val})
 
     for key in os.environ:
         if key.startswith("DEPLOY_"):
