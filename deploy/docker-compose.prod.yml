@@ -9,7 +9,7 @@ services:
     restart: always
     volumes: [ fs_data:/data ]
     environment:
-      - SECRET_KEY=${FILE_SHARER_SECRET_KEY}
+      - SECRET_KEY=${DEPLOY_FILE_SHARER_SECRET_KEY}
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=file_sharer
       - FS_MYSQL_USER=root

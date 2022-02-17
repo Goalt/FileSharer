@@ -1,5 +1,4 @@
 import os, json, requests
-import prod_env
 
 
 if __name__ == '__main__':
@@ -15,9 +14,6 @@ if __name__ == '__main__':
         print("Input parameters are invalid")
         exit(1)
 
-    # Read environment variables
-    envs = prod_env.environments
-
     # Read compose file
     composeFile = f = open("deploy/docker-compose.prod.yml")
     compose = f.read()
@@ -28,15 +24,19 @@ if __name__ == '__main__':
         {"name": "IMAGE_VERSION", "value": versionTag},
     ]
     
-    env = prod_env.environments
-    for key, value in env.items():
-        name = key
-        val = value 
+    # env = prod_env.environments
+    # for key, value in env.items():
+    #     name = key
+    #     val = value 
 
-        if value[0] == "$":
-            val = os.getenv(value[1:], "")
+    #     if value[0] == "$":
+    #         val = os.getenv(value[1:], "")
 
-        procEnv.append({"name": name, "value": val})
+    #     procEnv.append({"name": name, "value": val})
+
+    for key in os.environ:
+        if key.startswith("DEPLOY_"):
+           procEnv.append({"name": key, "value": os.getenv(key)}) 
 
     # Get JWT token
     data = {

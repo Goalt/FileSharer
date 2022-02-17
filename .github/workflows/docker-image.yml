@@ -47,7 +47,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/ppc64le
+          platforms: linux/arm64
           push: true
           tags: 
             ${{ steps.repo_slug.outputs.result }}:${{ steps.get_version.outputs.VERSION }}
@@ -60,4 +60,5 @@ jobs:
           PORTAINER_USER: ${{ secrets.PORTAINER_USER }} 
           PORTAINER_PASSW: ${{ secrets.PORTAINER_PASSW }} 
           PORTAINER_STACK_ID: ${{ secrets.PORTAINER_STACK_ID }}
-          FILE_SHARER_SECRET_KEY: ${{ secrets.FILE_SHARER_SECRET_KEY }}
+          # Here my variables
+          DEPLOY_FILE_SHARER_SECRET_KEY: ${{ secrets.FILE_SHARER_SECRET_KEY }}
