@@ -32,6 +32,7 @@ services:
     image: ghcr.io/goalt/filesharer:$IMAGE_VERSION
     container_name: file_sharer_migrations
     command: file_sharer_migrations
+    restart: on-failure
     environment:
       - MYSQL_DATABASE=file_sharer
       - FS_MYSQL_USER=root
